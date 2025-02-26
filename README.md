@@ -28,7 +28,7 @@ SciValidate seeks to create:
 4. An **evidence framework** for linking concise social media posts to their full scientific foundation
 5. A **visual indication system** that makes the state of scientific consensus instantly understandable
 
-![Concept Visualization](docs/images/scivalidate-concept.png)
+![Concept Visualization](docs/images/scivalidate-concept.svg)
 
 ## Current State of Development
 
