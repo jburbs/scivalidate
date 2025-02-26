@@ -23,7 +23,7 @@ SciValidate proposes a solution that allows verified scientific expertise to flo
 SciValidate seeks to create:
 
 1. A **verification system** that authenticates scientific expertise through public credentials
-2. A **reputation network** that tracks verified accomplishments while respecting domain specificity 
+2. A **reputation network** that tracks verified accomplishments while respecting domain specificity
 3. A **cross-platform identity layer** that allows consistent verification of identity and claims
 4. An **evidence framework** for linking concise social media posts to their full scientific foundation
 5. A **visual indication system** that makes the state of scientific consensus instantly understandable
@@ -47,13 +47,32 @@ The repository is organized as follows:
 
 ```
 scivalidate/
-├── src/
-│   ├── data_collection/ - Tools for gathering researcher and publication data
-│   ├── database/        - Database management and schema implementation  
-│   ├── analysis/        - Expertise and network analysis tools
-│   └── web/             - (Future) Web interface components
-├── docs/                - Documentation and concept explanations
-└── tests/               - Test infrastructure
+├── CONTRIBUTING.md                      # Contribution guidelines
+├── LICENSE                              # MIT License
+├── README.md                            # Project overview and documentation
+├── database-schema.md                   # Database schema documentation
+├── requirements.txt                     # Python package dependencies
+├── docs/                                # Documentation files
+│   ├── api_documentation.md             # API specifications
+│   ├── challenges.md                    # Technical challenges
+│   ├── database_schema.md               # Schema documentation
+│   └── overview.md                      # Project overview
+├── src/                                 # Source code
+│   ├── analysis/                        # Data analysis components
+│   │   ├── author_analysis_config.json  # Analysis configuration
+│   │   ├── author_analyzer.py           # Author expertise analysis
+│   │   ├── network_cache/               # Network data cache
+│   │   ├── process_faculty.py           # Faculty data processing
+│   │   └── scivalidate.db               # SQLite database (created)
+│   ├── data_collection/                 # Data collection tools
+│   │   ├── faculty_data_emails.json     # Faculty data (created)
+│   │   └── scraper.py                   # Web scraping functionality
+│   └── database/                        # Database components
+│       └── database_populator_4.py      # Database population logic
+├── tests/                               # Test suite
+│   └── placeholder.txt                  # Test placeholder
+└── web/                                 # Web interface (future)
+└── placeholder.html                     # Web placeholder
 ```
 
 ## Key Challenges
@@ -87,27 +106,32 @@ Designing a system to evaluate scientific reputation that balances traditional m
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/scivalidate.git
 cd scivalidate
 ```
 
 2. Install required packages:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 3. Run the data scraper to collect faculty information:
+
 ```bash
 python src/data_collection/scraper.py
 ```
 
 4. Process faculty data to populate the database:
+
 ```bash
 python src/database/process_faculty.py
 ```
 
 5. Analyze author expertise:
+
 ```bash
 python src/analysis/author_analyzer.py --db scivalidate.db
 ```
@@ -135,8 +159,8 @@ To contribute:
 
 For more context on the SciValidate concept, see these articles:
 
-- [Beyond DeSci: A Modern Architecture for Scientific Trust](https://link-to-first-article.com)
-- [Beyond DeSci Part 2: Starting Small](https://link-to-second-article.com)
+- [Beyond DeSci: A Modern Architecture for Scientific Trust](https://open.substack.com/pub/healingearth/p/beyond-desci-a-modern-architecture)
+- [Beyond DeSci Part 2: Starting Small](https://open.substack.com/pub/healingearth/p/beyond-desci-part-2-starting-small)
 
 ## License
 
