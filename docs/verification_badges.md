@@ -47,7 +47,7 @@ This system replaces arbitrary like counts with meaningful validation that refle
 
 The contrast between traditional social media metrics and SciValidate's approach is stark:
 
-![Comparing Current metrics with proposal](docs/images/comparison.png)
+[Comparing Current metrics with proposal](docs/images/comparison.png)
 
 ## Technical Implementation
 
