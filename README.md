@@ -47,32 +47,38 @@ The repository is organized as follows:
 
 ```
 scivalidate/
-├── CONTRIBUTING.md                      # Contribution guidelines
-├── LICENSE                              # MIT License
-├── README.md                            # Project overview and documentation
-├── database-schema.md                   # Database schema documentation
-├── requirements.txt                     # Python package dependencies
-├── docs/                                # Documentation files
-│   ├── api_documentation.md             # API specifications
-│   ├── challenges.md                    # Technical challenges
-│   ├── database_schema.md               # Schema documentation
-│   └── overview.md                      # Project overview
-├── src/                                 # Source code
-│   ├── analysis/                        # Data analysis components
-│   │   ├── author_analysis_config.json  # Analysis configuration
-│   │   ├── author_analyzer.py           # Author expertise analysis
-│   │   ├── network_cache/               # Network data cache
-│   │   ├── process_faculty.py           # Faculty data processing
-│   │   └── scivalidate.db               # SQLite database (created)
-│   ├── data_collection/                 # Data collection tools
-│   │   ├── faculty_data_emails.json     # Faculty data (created)
-│   │   └── scraper.py                   # Web scraping functionality
-│   └── database/                        # Database components
-│       └── database_populator_4.py      # Database population logic
-├── tests/                               # Test suite
-│   └── placeholder.txt                  # Test placeholder
-└── web/                                 # Web interface (future)
-└── placeholder.html                     # Web placeholder
+├── src/                    # Source code
+│   ├── data_collection/    # Faculty and researcher data acquisition
+│   │   ├── scraper.py      # Web scraping implementation for academic departments
+│   │   └── faculty_data_emails.json  # Structured faculty information
+│   │
+│   ├── database/           # Data persistence and modeling
+│   │   └── database_populator_4.py  # Database schema and population logic
+│   │
+│   ├── analysis/           # Scientific expertise analysis
+│       ├── process_faculty.py  # Processing pipeline for faculty data
+│       ├── author_analyzer.py  # Expertise calculation and network analysis
+│       ├── author_analysis_config.json  # Analysis configuration
+│       ├── scivalidate.db  # SQLite database with processed data
+│       └── network_cache/  # Cache for network analysis results
+│
+├── docs/                   # Project documentation
+│   ├── overview.md         # Project vision and architecture
+│   ├── challenges.md       # Technical challenges and approaches
+│   ├── api_documentation.md # API design specifications
+│   ├── database_schema.md  # Database schema reference
+│   └── getting_started.md  # Guide for new contributors
+│
+├── tests/                  # Test suite
+│   └── test_name_parsing.py # Unit tests for name parsing functionality
+│
+├── web/                    # Future web interface components
+│   └── placeholder.html    # Placeholder for web implementation
+│
+├── CONTRIBUTING.md         # Contribution guidelines
+├── README.md               # Project overview
+├── LICENSE                 # MIT License
+└── requirements.txt        # Python dependencies
 ```
 
 ## Key Challenges
