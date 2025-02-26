@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- White circular background -->
+  <circle cx="50" cy="50" r="48" fill="#ffffff"/>
+  
+  <!-- Base orbital structure -->
+  <ellipse cx="50" cy="50" rx="45" ry="20" fill="none" stroke="#2563eb" strokeWidth="2" transform="rotate(60,50,50)"/>
+  <ellipse cx="50" cy="50" rx="45" ry="20" fill="none" stroke="#2563eb" strokeWidth="2" transform="rotate(-60,50,50)"/>
+  <ellipse cx="50" cy="50" rx="45" ry="20" fill="none" stroke="#2563eb" strokeWidth="2"/>
+  
+  <!-- Center circle with checkmark -->
+  <circle cx="50" cy="50" r="15" fill="#ffffff" stroke="#2563eb" strokeWidth="2"/>
+  <path d="M42 50 L48 56 L58 44" stroke="#2563eb" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+  
+  <!-- Electrons on the orbital paths -->
+  <!-- Horizontal orbital electron (on left side) -->
+  <circle cx="5" cy="50" r="3" fill="#2563eb" />
+  
+  <!-- 60-degree rotated orbital electron -->
+  <g transform="rotate(60,50,50)">
+    <circle cx="95" cy="50" r="3" fill="#2563eb" />
+  </g>
+  
+  <!-- -60-degree rotated orbital electron -->
+  <g transform="rotate(-60,50,50)">
+    <circle cx="95" cy="50" r="3" fill="#2563eb" />
+  </g>
+</svg>
