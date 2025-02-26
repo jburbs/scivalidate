@@ -1,0 +1,360 @@
+{
+  "core_faculty": [
+    {
+      "id": "6b2f20e65ef4b1dff83cd15fccc4a9914f17d62dbe0439e1980c3d83162a49d1",
+      "name": "Chulsung Bae",
+      "position": "Ford Foundation Professor, Associate Director of Center for Future Energy Systems",
+      "profile_url": "https://faculty.rpi.edu/chulsung-bae",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/Bae_crop.jpg?itok=O-37CNTk",
+      "scrape_date": "2025-02-26T08:42:32.548866",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "baec@rpi.edu"
+    },
+    {
+      "id": "88987907f02a7ec51705eb9ad0bb422835411e5459f3091817ccf231e7a6d5e4",
+      "name": "Amgalanbaatar Baldansuren",
+      "position": "Lecturer",
+      "profile_url": "https://faculty.rpi.edu/amgalanbaatar-baldansuren",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2024-06/AmgalanbaatarBaldansuren-sq.jpg?itok=7gFWmKq9",
+      "scrape_date": "2025-02-26T08:42:34.129737",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "baldaa@rpi.edu"
+    },
+    {
+      "id": "a680741f0e64e1458691530ccb241aeb6bd0f8f2d735546c584a87161a5c071c",
+      "name": "Peter J.  Bonitatibus",
+      "position": "Associate Professor",
+      "profile_url": "https://faculty.rpi.edu/peter-j-bonitatibus",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2023-05/bonitp2%40rpi.edu_Peter_Bonitatibus_Socialmedia.jpg?itok=slMCAW2N",
+      "scrape_date": "2025-02-26T08:42:35.417000",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "bonitp2@rpi.edu"
+    },
+    {
+      "id": "11e867b421bb3a49234745171ad48b7166a51c27465102465fed8f4a8c78ca1b",
+      "name": "Christopher Cioffi",
+      "position": "Thomas and Constance D'Ambra Professor in Organic Chemistry",
+      "profile_url": "https://faculty.rpi.edu/christopher-cioffi",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2022-10/picture.jpg?itok=-ASdfmSU",
+      "scrape_date": "2025-02-26T08:42:36.857473",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "cioffc4@rpi.edu"
+    },
+    {
+      "id": "2aa5b2b27831d308a9a24dde451246da3d2f5d8bc89035be473f4876a40dab81",
+      "name": "Wilfredo Colon",
+      "position": "Professor, Department Head",
+      "profile_url": "https://faculty.rpi.edu/wilfredo-colon",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/Colon_crop.jpg?itok=I0OgGS8e",
+      "scrape_date": "2025-02-26T08:42:38.435177",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "colonw@rpi.edu"
+    },
+    {
+      "id": "1ea044173488767e5bf609641ef4ee7e984759aa153c7697b13f4ba452854c7d",
+      "name": "Peter Dinolfo",
+      "position": "Associate Professor and Associate Department Head",
+      "profile_url": "https://faculty.rpi.edu/peter-dinolfo",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/Dinolfo_crop.jpg?itok=YmTGebiP",
+      "scrape_date": "2025-02-26T08:42:39.997129",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "dinolp@rpi.edu"
+    },
+    {
+      "id": "a9de4977b8e8b96ea825ee0f72252aacf8afbe24b0f818a9a4228e7b2ce58cd5",
+      "name": "Richard Gross",
+      "position": "Professor and Constellation Endowed Chair",
+      "profile_url": "https://faculty.rpi.edu/richard-gross",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/Richard%2520Gross%2520head%2520shot%25202.jpg?itok=T9uDidL5",
+      "scrape_date": "2025-02-26T08:42:41.528572",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "grossr@rpi.edu"
+    },
+    {
+      "id": "daf602b1c7cbd13e495806ffe07e63ebff8cde65b85ea7fcce9318aa5a6dc165",
+      "name": "Kristin Johnson",
+      "position": "Assistant Professor",
+      "profile_url": "https://faculty.rpi.edu/kristin-johnson",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2022-10/Johnson-Finn_JRowl_better_square.jpg?itok=i53GY0ri",
+      "scrape_date": "2025-02-26T08:42:43.346646",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "johnsk28@rpi.edu"
+    },
+    {
+      "id": "59ff1cd2f19ce4a9f802f7804b75d1b008de2d5f8019dc77934743306b7313eb",
+      "name": "Margarita Kirova-Snover",
+      "position": "Lecturer",
+      "profile_url": "https://faculty.rpi.edu/margarita-kirova-snover",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/kirovm%2540rpi.edu_MargaritaKirova-Snover_Square.jpg?itok=Y4BdwudF",
+      "scrape_date": "2025-02-26T08:42:44.465450",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "kirovm@rpi.edu"
+    },
+    {
+      "id": "460b1fd0b615e9ab282f0a96a57ce3c3b4ae01aaef77385b920679a39bdf3451",
+      "name": "Gerald Korenowski",
+      "position": "Professor, Director of Undergraduate Studies and Research",
+      "profile_url": "https://faculty.rpi.edu/gerald-korenowski",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/Korenowski_crop.jpg?itok=KhruGH3Q",
+      "scrape_date": "2025-02-26T08:42:45.547761",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "koreng@rpi.edu"
+    },
+    {
+      "id": "8b1e5ffce53b93dce9ae38dc435e10dfc0ca1f45771f857b64481e638f812c0e",
+      "name": "K. V. Lakshmi",
+      "position": "Professor and Director, Baruch '60 Center For Biochemical Solar Energy Research",
+      "profile_url": "https://faculty.rpi.edu/k-v-lakshmi",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/Untitled2.png?itok=HYKav2S9",
+      "scrape_date": "2025-02-26T08:42:46.627517",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "lakshk@rpi.edu"
+    },
+    {
+      "id": "caf4137a8fb2dbb733d77110827589c658640a6a9c7ca0557df009889f38fe1b",
+      "name": "Alexander Ma",
+      "position": "Sr. Lecturer",
+      "profile_url": "https://faculty.rpi.edu/alexander-ma",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/maa4_AlexMa_SocialMedia%2520%25282%2529.jpg?itok=4MS_T7nG",
+      "scrape_date": "2025-02-26T08:42:47.703944",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "maa4@rpi.edu"
+    },
+    {
+      "id": "bb4e2bb6db6ddc479abd52202fef288cd5dd2a6394ac7dd3e862eb54c13ba6ce",
+      "name": "Gaetano Montelione",
+      "position": "Professor and Constellation Endowed Chair",
+      "profile_url": "https://faculty.rpi.edu/gaetano-montelione",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2023-04/Montelione%202017.png?itok=sgMXz82q",
+      "scrape_date": "2025-02-26T08:42:48.820019",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "monteg3@rpi.edu"
+    },
+    {
+      "id": "40f1bfbd5276be12db6068c7f88cfd2d425c779dfb2fe747b2103dc372d5f8b5",
+      "name": "Nick Platts",
+      "position": "Lecturer",
+      "profile_url": "https://faculty.rpi.edu/nick-platts",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2023-04/platts2%40rpi.edu_Nick_Platts_SocialMedia%20%28002%29.jpg?itok=CPl4PN_I",
+      "scrape_date": "2025-02-26T08:42:49.919559",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "platts2@rpi.edu"
+    },
+    {
+      "id": "87cde3560d2b558a641566d3ec82265480dfe1b9b822b812d224298ba0a364a4",
+      "name": "Geetu Sharma",
+      "position": "Lecturer",
+      "profile_url": "https://faculty.rpi.edu/geetu-sharma",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2024-06/Geetu%20Sharma-sq.jpg?itok=z1yN_MFW",
+      "scrape_date": "2025-02-26T08:42:51.079549",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "sharmg4@rpi.edu"
+    },
+    {
+      "id": "737ae16c9e3516cdd221b363493cf2ccb91f49791d5c588b549d26c79b5e9326",
+      "name": "Jacob Shelley",
+      "position": "Alan Paul Schulz Career Development Professor Of Chemistry",
+      "profile_url": "https://faculty.rpi.edu/jacob-shelley",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/shelley3.jpg?itok=6a6YNJjo",
+      "scrape_date": "2025-02-26T08:42:52.307909",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "shellj@rpi.edu"
+    },
+    {
+      "id": "234cfc11429b952426c6438e533d8f82d98a82e657475c198239e5e89c32e4b2",
+      "name": "Liz Sprague",
+      "position": "Sr. Lecturer",
+      "profile_url": "https://faculty.rpi.edu/liz-sprague",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/L%2520Sprague%2520Chem%2520Dept%2520Head%2520Shot_0.jpg?itok=it2s2KYl",
+      "scrape_date": "2025-02-26T08:42:53.484430",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "sprage@rpi.edu"
+    },
+    {
+      "id": "54884b6a5eb1976dcab8b1956992aad72403630cdd835573e5b540af7e14b989",
+      "name": "Filbert Totsingan",
+      "position": "Lecturer",
+      "profile_url": "https://faculty.rpi.edu/filbert-totsingan",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/totsif%2540rpi.edu_FilbertTotsingan_resized_0.jpg?itok=vRRapM_m",
+      "scrape_date": "2025-02-26T08:42:54.673438",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "totsif@rpi.edu"
+    },
+    {
+      "id": "6315a457407c580130d2cbfbdac75e44d873cc645ad6457d02bd90008588f7f5",
+      "name": "Steven Tysoe",
+      "position": "Lecturer",
+      "profile_url": "https://faculty.rpi.edu/steven-tysoe",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2023-05/Dr%20T%20Photo.jpg?itok=f3GDQHVX",
+      "scrape_date": "2025-02-26T08:42:55.931852",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "tysoes@rpi.edu"
+    },
+    {
+      "id": "ea444efbe622c2c341100660f669aac1c58c50fb9fc887792a3940157fb8cab2",
+      "name": "Mike Van Valkenburg",
+      "position": "Professor of Practice, Brig Gen (ret), USAF",
+      "profile_url": "https://faculty.rpi.edu/mike-van-valkenburg",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2024-03/VanValkenburgSquarePhoto.jpeg?itok=yN2SC1sp",
+      "scrape_date": "2025-02-26T08:42:57.023892",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "vanvam@rpi.edu"
+    }
+  ],
+  "affiliated_faculty": [
+    {
+      "id": "673c26bad365a9d202df3ead1463fa59ff2c34f550abd7443147fa029693c800",
+      "name": "Blanca Barquera",
+      "position": "Professor",
+      "profile_url": "https://faculty.rpi.edu/blanca-barquera",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/barquera_crop2.jpg?itok=pKskugeC",
+      "scrape_date": "2025-02-26T08:42:58.109967",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "barqub@rpi.edu"
+    },
+    {
+      "id": "1f2357a2ebbf8a22a8273f6f74c42e7d9c0b22bf0ae22121a8b4a1d1a6fc09fb",
+      "name": "Steven Cramer",
+      "position": "Institute Professor, NAE",
+      "profile_url": "https://faculty.rpi.edu/steven-cramer",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2024-12/Cramer%20photo%2011%20ver%204%202024.jpeg?itok=CEk3Ivpp",
+      "scrape_date": "2025-02-26T08:42:59.238095",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "crames@rpi.edu"
+    },
+    {
+      "id": "f2cdd33c4916907782edc29c88294edc6323d5e8a6b902aa8e4d3592f7a1557b",
+      "name": "George Makhatadze",
+      "position": "Professor and Constellation Endowed Chair",
+      "profile_url": "https://faculty.rpi.edu/george-makhatadze",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/makhatadze_crop.jpg?itok=75UkRgAN",
+      "scrape_date": "2025-02-26T08:43:00.307487",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "makhag@rpi.edu"
+    },
+    {
+      "id": "24e3fd21620a123e8af8d758755eb197d5bb7d34bb98f1dbcb435bd2f6109325",
+      "name": "Catherine Royer",
+      "position": "Professor and Constellation Endowed Chair",
+      "profile_url": "https://faculty.rpi.edu/catherine-royer",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/royer_crop2.jpg?itok=1YGv-kpM",
+      "scrape_date": "2025-02-26T08:43:01.390830",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "royerc@rpi.edu"
+    },
+    {
+      "id": "ba58edea22b1087dd5072f590e6f19c98a27786fc33873f06f6206ddf8d5352c",
+      "name": "Sasha Wagner",
+      "position": "Assistant Professor, Associate Director of the Center for Environmental Stable Isotope Analysis, and Graduate Program Director",
+      "profile_url": "https://faculty.rpi.edu/sasha-wagner",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/DSC_0832sqsm_0.jpg?itok=lF1rgQ_v",
+      "scrape_date": "2025-02-26T08:43:02.520777",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "wagnes3@rpi.edu"
+    },
+    {
+      "id": "9b39a0a995ba42f1755b21daf89dd0cbfb43d490c20a8bd5ed33d9f0a532b241",
+      "name": "Chunyu Wang",
+      "position": "Professor",
+      "profile_url": "https://faculty.rpi.edu/chunyu-wang",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/IMG_0151.jpeg?itok=Cus5MLaM",
+      "scrape_date": "2025-02-26T08:43:03.590204",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "wangc5@rpi.edu"
+    }
+  ],
+  "emeritus": [
+    {
+      "id": "b8119c2ccf782d624d9db593d6c69593a82c04c9af978d2af0ed4992636f5497",
+      "name": "Ronald Bailey",
+      "position": "Professor Emeritus",
+      "profile_url": "https://faculty.rpi.edu/ronald-bailey",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/Bailey_crop.jpg?itok=w_tciU9l",
+      "scrape_date": "2025-02-26T08:43:04.659921",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "bailer@rpi.edu"
+    },
+    {
+      "id": "da2e65714a72ba6a49494eebad50f2826ef6cd5da5b617c4bcc99f81251c34d4",
+      "name": "Leonard Interrante",
+      "position": "Professor Emeritus",
+      "profile_url": "https://faculty.rpi.edu/leonard-interrante",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/LVI%2520photo%2520final.jpg?itok=yvzc3TbI",
+      "scrape_date": "2025-02-26T08:43:05.734372",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "interl@rpi.edu"
+    },
+    {
+      "id": "b9311839673eec7a3b830c83da6ab62300f6f6eebe0b96d5add74bf74f1c0281",
+      "name": "Robert Linhardt",
+      "position": "Professor Emeritus",
+      "profile_url": "https://faculty.rpi.edu/robert-linhardt",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/Lindhardt_crop.jpg?itok=kQdy4cVy",
+      "scrape_date": "2025-02-26T08:43:06.808963",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "linhar@rpi.edu"
+    },
+    {
+      "id": "d79d736219d6b671b213a650b80d21016e8cf74c2b00bf1a493252d7c3ce8ea3",
+      "name": "Kenneth Miller",
+      "position": "Professor Emeritus",
+      "profile_url": "https://faculty.rpi.edu/kenneth-miller",
+      "image_url": "https://faculty.rpi.edu/modules/custom/rpifaculty/img/user.jpg",
+      "scrape_date": "2025-02-26T08:43:07.881882",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "millek3@rpi.edu"
+    },
+    {
+      "id": "ed15db01fe6bc8510bc1b7c62e8b1cc8ec743cb8a6fe77da8c468eb83075acd8",
+      "name": "Joseph Warden",
+      "position": "Professor Emeritus",
+      "profile_url": "https://faculty.rpi.edu/joseph-warden",
+      "image_url": "https://faculty.rpi.edu/modules/custom/rpifaculty/img/user.jpg",
+      "scrape_date": "2025-02-26T08:43:08.950268",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "wardej@rpi.edu"
+    },
+    {
+      "id": "a72c650c62c0661b51fd384cf9d3bf05c36158e9fd188718b3002ee71db155f8",
+      "name": "Mark Wentland",
+      "position": "Professor Emeritus",
+      "profile_url": "https://faculty.rpi.edu/mark-wentland",
+      "image_url": "https://faculty.rpi.edu/sites/default/files/styles/medium/public/2021-12/MPW-4-022521_0.JPG?itok=JdndPx44",
+      "scrape_date": "2025-02-26T08:43:10.059476",
+      "department": "Chemistry and Chemical Biology",
+      "institution": "Rensselaer Polytechnic Institute",
+      "email": "wentlm3@rpi.edu"
+    }
+  ]
+}

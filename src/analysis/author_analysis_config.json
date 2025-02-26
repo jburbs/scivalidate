@@ -1,0 +1,26 @@
+{
+    "h_index_weight": 0.3,
+    "citation_weight": 0.3,
+    "productivity_weight": 0.2,
+    "expertise_weight": 0.2,
+    "recency_weight": 0.1,
+    "impact_factor_weight": 0.1,
+    "max_score": 10.0,
+    "default_normalization": 1.0,
+    "min_authors_for_normalization": 5,
+    "min_keyword_count": 2,
+    "max_keywords_per_author": 10,
+    "keyword_weights": {
+        "defined_keyword": 3.0,
+        "title_word": 2.0,
+        "abstract_word": 1.0
+    },
+    "keyword_min_length": 4,
+    "field_classification": {
+        "min_similarity": 0.7,
+        "use_parent_fields": true,
+        "max_fields_per_author": 3
+    },
+    "display_detailed_scores": true,
+    "sort_by": "reputation_score"
+}
