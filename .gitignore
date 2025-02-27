@@ -49,7 +49,11 @@ env.bak/
 venv.bak/
 
 # Database files
+# Line 52: Ignore all .db files
 *.db
+
+# But don't ignore this specific database
+!scivalidate.db
 *.db-shm
 *.db-wal
 *.sqlite
