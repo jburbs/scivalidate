@@ -84,3 +84,7 @@ Desktop.ini
 .vscode/
 *.swp
 *.swo
+
+# Web Support Packages
+node_modules/
+bower_components/
