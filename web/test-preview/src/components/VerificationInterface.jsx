@@ -112,10 +112,10 @@ const VerificationInterface = ({ facultyId }) => {
             {facultyData.identifiers?.map((id, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <span className="text-gray-600">{id.identifier_type}:</span>
-                <span>{id.identifier_value}</span>
-                {id.is_primary && (
+                <span>{String(id.identifier_value)}</span>
+                {id.is_primary > 0 ? (
                   <Badge variant="secondary">Primary</Badge>
-                )}
+                ) : null}
                 <Badge 
                   variant={id.verification_status === 'verified' ? 'success' : 'warning'}
                 >
