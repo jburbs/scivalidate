@@ -1,0 +1,37 @@
+# Core dependencies
+aiohttp>=3.8.4
+asyncio>=3.4.3
+beautifulsoup4>=4.11.1
+nltk>=3.7
+numpy>=1.22.3
+scikit-learn>=1.0.2
+requests>=2.27.1
+pandas>=1.4.2
+
+# Database
+fastapi>=0.95.0
+uvicorn>=0.21.1
+SQLAlchemy>=1.4.39
+pydantic>=1.10.7
+python-multipart>=0.0.6
+python-dotenv>=1.0.0
+
+# Analysis
+scipy>=1.8.0
+networkx>=2.8.1
+matplotlib>=3.5.1
+
+# Data parsing
+lxml>=4.8.0
+json5>=0.9.6
+
+# Testing
+pytest>=7.0.1
+pytest-asyncio>=0.18.3
+
+# Development tools
+black>=22.3.0
+flake8>=4.0.1
+pre-commit>=2.18.1
+
+# Database Packages
