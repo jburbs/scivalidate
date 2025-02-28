@@ -29,6 +29,33 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+# Add a health check endpoint for Render
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Render"""
+    return {"status": "healthy"}
+
+# Add a root endpoint to help with debugging
+@app.get("/")
+async def root():
+    """Root endpoint with API information"""
+    return {
+        "message": "SciValidate API is running",
+        "endpoints": [
+            "/health",
+            "/faculty",
+            "/faculty/{faculty_id}",
+            "/faculty/{faculty_id}/reputation",
+            "/diagnose/db",
+            "/populate/sample"
+        ],
+        "db_path": DB_PATH,
+        "db_exists": os.path.exists(DB_PATH),
+        "file_size": os.path.getsize(DB_PATH) if os.path.exists(DB_PATH) else 0
+    }
+
+# Modified endpoints to work both with and without /api prefix
+@app.get("/faculty")
 @app.get("/api/faculty")
 async def get_faculty_list():
     """
@@ -94,6 +121,7 @@ async def get_faculty_list():
         if 'conn' in locals():
             conn.close()
 
+@app.get("/faculty/{faculty_id}")
 @app.get("/api/faculty/{faculty_id}")
 async def get_faculty_detail(faculty_id: str):
     """
@@ -201,6 +229,7 @@ async def get_faculty_detail(faculty_id: str):
         if 'conn' in locals():
             conn.close()
 
+@app.get("/diagnose/db")
 @app.get("/api/diagnose/db")
 async def diagnose_db():
     """Return database schema information for debugging."""
@@ -245,6 +274,7 @@ async def diagnose_db():
         if 'conn' in locals():
             conn.close()
 
+@app.post("/populate/sample")
 @app.post("/api/populate/sample")
 async def populate_sample_data():
     """Create sample data for testing the application."""
@@ -383,6 +413,7 @@ async def populate_sample_data():
         if 'conn' in locals():
             conn.close()
 
+@app.get("/faculty/{faculty_id}/reputation")
 @app.get("/api/faculty/{faculty_id}/reputation")
 async def get_faculty_reputation(faculty_id: str):
     """
