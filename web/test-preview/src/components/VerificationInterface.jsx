@@ -12,8 +12,9 @@ const VerificationInterface = ({ facultyId }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Using port 8000 for FastAPI
-        const response = await fetch(`http://localhost:8000/api/faculty/${facultyId}`);
+        // Use environment variable with fallback
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://scivalidate.onrender.com';
+        const response = await fetch(`${apiUrl}/api/faculty/${facultyId}`);
         
         if (!response.ok) {
           const errorData = await response.json();

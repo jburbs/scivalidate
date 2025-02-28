@@ -14,7 +14,7 @@ const FacultyViewer = () => {
     const fetchFaculty = async () => {
       try {
         // This endpoint should return basic information for all faculty members
-        const response = await fetch('/api/faculty');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/faculty`);
         if (!response.ok) {
           throw new Error('Failed to load faculty data');
         }
