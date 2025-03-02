@@ -72,17 +72,39 @@ scivalidate/
 │
 ├── tests/                  # Test suite
 │   └── test_name_parsing.py # Unit tests for name parsing functionality
-│
 ├── web/                    # Web interface components
-│   ├── index.html          # Main entry point for the web interface
-│   ├── css/                # Stylesheets for the web interface
-│   ├── js/                 # JavaScript implementation
-│   │   ├── network.js      # Scientific network visualization
-│   │   ├── profiles.js     # Researcher profile handling
-│   │   └── verification.js # Verification badge implementation
-│   ├── assets/             # Static assets for the web interface
-│   └── examples/           # Example implementations and demonstrations
-│
+│   ├── README.md           # Example documentation
+│   ├── test-preview/       # React/Vite/Tailwind web structure
+│   |   ├── .github/                 # GitHub workflows, PR templates
+│   |   ├── api.py          # API for database access
+│   |   ├── public/                  # Static assets
+│   |   ├── src/
+│   |   │   ├── assets/              # Images, fonts, and other assets/
+│   |   │   ├── components/          # Reusable UI components
+│   |   │   ├── common/          # Site-wide components (Header, Footer, etc.)
+│   |   │   ├── features/        # Feature-specific components
+│   |   │   └── ui/              # Base UI components
+│   |   ├── contexts/            # React context providers
+│   |   ├── hooks/               # Custom React hooks
+│   |   ├── layouts/             # Page layout components
+│   |   ├── lib/                 # Utility functions and libraries
+│   |   ├── pages/               # Page components
+│   |   ├── services/            # API service integrations
+│   |   ├── stores/              # State management (Redux, Zustand, etc.)
+│   |   ├── styles/              # Global styles and Tailwind configuration
+│   |   ├── types/               # TypeScript type definitions
+│   |   ├── App.tsx              # Root application component
+│   |   ├── main.tsx             # Application entry point
+│   |   └── vite-env.d.ts        # Vite type declarations
+│   ├── eslintrc.js             # ESLint configuration
+│   ├── .gitignore               # Git ignore file
+│   ├── index.html               # HTML entry point
+│   ├── package.json             # Project dependencies and scripts
+│   ├── postcss.config.js        # PostCSS configuration
+│   ├── README.md                # Project README
+│   ├── tailwind.config.js       # Tailwind CSS configuration
+│   ├── tsconfig.json            # TypeScript configuration
+│   └── vite.config.ts           # Vite configuration
 ├── CONTRIBUTING.md         # Contribution guidelines
 ├── README.md               # Project overview
 ├── LICENSE                 # MIT License
