@@ -241,20 +241,6 @@ def calculate_reputation_scores(conn, config, impact_factors=None):
     - Recency factor: Gives more weight to recent publications
     - Venue quality: Uses impact factors of publication venues
     - Field-specific normalization: Accounts for different citation practices across disciplines
-    
-    Parameters:
-    -----------
-    conn : sqlite3.Connection
-        Connection to the database
-    config : dict
-        Configuration parameters for score calculation
-    impact_factors : dict, optional
-        Cache of journal impact factors
-    
-    Returns:
-    --------
-    dict
-        Dictionary of author IDs to reputation score information
     """
     author_reputations = {}
     
@@ -263,11 +249,11 @@ def calculate_reputation_scores(conn, config, impact_factors=None):
     citation_weight = config.get('citation_weight', 0.3)
     productivity_weight = config.get('productivity_weight', 0.2)
     expertise_weight = config.get('expertise_weight', 0.2)
-    recency_weight = config.get('recency_weight', 0.1)  # Within the expertise component
-    impact_factor_weight = config.get('impact_factor_weight', 0.1)  # Within the expertise component
+    recency_weight = config.get('recency_weight', 0.1)
+    impact_factor_weight = config.get('impact_factor_weight', 0.1)
     max_score = config.get('max_score', 10.0)
     
-    # Base query to get author metrics
+    # Modified base query to only select authors with at least one publication
     base_query = """
     SELECT 
         a.id as author_id, 
@@ -285,17 +271,26 @@ def calculate_reputation_scores(conn, config, impact_factors=None):
         END) as latest_pub_year
     FROM 
         authors a
-    LEFT JOIN 
+    INNER JOIN  -- Changed from LEFT JOIN to INNER JOIN
         author_publications ap ON a.id = ap.author_id
     LEFT JOIN 
         publications p ON ap.publication_id = p.id
     GROUP BY 
         a.id
+    HAVING 
+        COUNT(DISTINCT p.id) > 0  -- Ensure at least one publication
     """
     current_year = datetime.datetime.now().year
 
     try:
         cursor = conn.cursor()   
+        cursor.execute(base_query)
+        
+        # Get count of authors being processed
+        author_count = len(cursor.fetchall())
+        print(f"Calculating reputation scores for {author_count} authors with publications")
+        
+        # Re-execute query since fetchall consumed the results
         cursor.execute(base_query)
                
         # Field-specific normalization factors
@@ -417,10 +412,10 @@ def calculate_reputation_scores(conn, config, impact_factors=None):
             # Precompute the log scales for citation and publication counts
             max_log_citations = math.log10(max_citations + 1)
             max_log_publications = math.log10(max_publications + 1)
-
-            print ("Max h index:", max_h_index)
-            print ("Max citations:", max_citations)
-            print ("Max publications:", max_publications)
+            # Debug lines; Remove comments if desired
+            # print ("Max h index:", max_h_index)
+            # print ("Max citations:", max_citations)
+            # print ("Max publications:", max_publications)
             
             # Normalize components
             h_index_component = (h_index / max_h_index) * h_index_weight
@@ -434,7 +429,7 @@ def calculate_reputation_scores(conn, config, impact_factors=None):
             raw_score = (h_index_component + citation_component + productivity_component + expertise_component) * venue_quality_factor / field_normalization
 
             # Apply non-linear scaling or normalization
-            normalized_score = max_score * (1 - math.exp(-raw_score / max_score))
+            normalized_score = max_score * (1 - math.exp(-raw_score))
                         
             # Store detailed score components for transparency
             author_reputations[author_id] = {
@@ -494,6 +489,7 @@ def get_field_normalization_factors(conn, config):
     citation_weight = config.get('citation_weight', 0.3)
     min_authors_for_normalization = config.get('min_authors_for_normalization', 5)
     default_normalization = config.get('default_normalization', 1.0)
+    max_normalization = config.get('max_normalization', 3.0) 
     
     query = """
     SELECT 
@@ -823,29 +819,95 @@ def analyze_field_relationships(conn):
 
 # Field & Topic Analysis (Advanced NLP)
 
+# Revised code for generating a name for a topic
+def generate_topic_name(terms):
+    """
+    Generate a better name for a topic using domain knowledge of compound terms.
+    
+    Parameters:
+    -----------
+    terms : list
+        List of top terms for the topic
+        
+    Returns:
+    --------
+    str
+        A meaningful name for the topic
+    """
+    # Define common compound terms in chemistry/biology
+    compound_terms = {
+        "organic_chemistry": "organic chemistry",
+        "mass_spectrometry": "mass spectrometry", 
+        "nuclear_magnetic_resonance": "NMR",
+        "protein_folding": "protein folding",
+        "escherichia_coli": "E. coli",
+        "cell_biology": "cell biology",
+        "molecular_biology": "molecular biology",
+        "quantum_mechanics": "quantum mechanics",
+        "crystal_structure": "crystal structure",
+        "composite_material": "composite materials",
+        "liquid_chromatography": "liquid chromatography"
+    }
+    
+    # First check if we have compound terms in our top terms
+    primary_term = None
+    for term in terms:
+        if term in compound_terms:
+            primary_term = compound_terms[term]
+            break
+    
+    # If no compound term found, use the first term
+    if not primary_term:
+        primary_term = terms[0].replace('_', ' ')
+    
+    # Find a secondary term that complements the primary
+    secondary_term = None
+    for term in terms[1:5]:
+        term_readable = term.replace('_', ' ')
+        if term in compound_terms:
+            term_readable = compound_terms[term]
+            
+        # Use this term if it's not part of the primary term
+        if primary_term not in term_readable and term_readable not in primary_term:
+            secondary_term = term_readable
+            break
+    
+    # If no suitable secondary term found, use the second highest ranked term
+    if not secondary_term and len(terms) > 1:
+        secondary_term = terms[1].replace('_', ' ')
+    
+    # Format the topic name
+    if secondary_term:
+        return f"{primary_term} & {secondary_term}"
+    else:
+        return primary_term
+
 def suggest_new_fields_with_topic_modeling(conn, author_keywords, config):
     """
     Use advanced topic modeling to suggest new research fields based on
     natural patterns in the publication data.
-    
-    Parameters:
-    -----------
-    conn : sqlite3.Connection
-        Connection to the database
-    author_keywords : dict
-        Dictionary of author IDs to their keywords
-    config : dict
-        Configuration parameters
-        
-    Returns:
-    --------
-    list
-        List of potential new fields with associated keywords and authors
+    Now with n-gram recognition.
     """
     print("Performing topic modeling to identify research areas...")
     
-    # 1. Prepare data for topic modeling
+    # Add domain-specific compound terms
+    compound_terms = [
+        "organic chemistry", "escherichia coli", "nuclear magnetic resonance", 
+        "mass spectrometry", "machine learning", "artificial intelligence",
+        "protein folding", "cell biology", "molecular biology", "gene expression",
+        "quantum mechanics", "natural language processing", "data mining",
+        "deep learning", "neural network", "climate change", "renewable energy",
+        "synthetic biology", "structural biology", "genetic algorithm",
+        "magnetic resonance", "amino acid", "carbon nanotube", "stem cell",
+        "high performance", "quantum computing", "natural language"
+    ]
+    # Add more compound terms relevant to your domain
+    
+    # 1. Prepare data for topic modeling with n-gram recognition
     # Extract all text data (titles, abstracts, keywords) from publications
+    
+    topic_relationships = []
+
     query = """
     SELECT 
         p.id,
@@ -875,26 +937,43 @@ def suggest_new_fields_with_topic_modeling(conn, author_keywords, config):
     
     # Add domain-specific stopwords
     academic_stopwords = {
-        'study', 'research', 'analysis', 'method', 'result', 'using', 'based',
-        'approach', 'data', 'paper', 'journal', 'publication', 'author', 'university',
-        'department', 'work', 'review', 'article', 'abstract', 'introduction',
-        'conclusion', 'experimental', 'discussion', 'results', 'methods',
-        'wide', 'world', 'web', 'index', 'http', 'https', 'url', 'link',
-        'page', 'site', 'internet', 'computer', 'science', 'engineering',
-        'technology', 'university', 'journal', 'proceedings', 'conference'
+        "study", "research", "analysis", "method", "result", "using", "based",
+        "approach", "data", "paper", "journal", "publication", "author", "university",
+        "department", "work", "review", "article", "abstract", "introduction",
+        "conclusion", "experimental", "discussion", "results", "methods",
+        "wide", "world", "web", "index", "http", "https", "url", "link",
+        "page", "site", "internet", "computer", "science", "engineering",
+        "technology", "university", "journal", "proceedings", "conference"
     }
     stopwords_set.update(academic_stopwords)
     
     def preprocess_text(text):
         if not text:
             return ""
-        # Remove punctuation and lowercase
-        text = re.sub(r'[^\w\s]', ' ', text.lower())
+            
+        # Replace compound terms with underscored versions
+        processed_text = text.lower()
+        for term in compound_terms:
+            # Replace only if the term exists as a whole phrase
+            processed_text = re.sub(r'\b' + re.escape(term) + r'\b', 
+                                   term.replace(' ', '_'), 
+                                   processed_text)
+            
+        # Remove punctuation
+        processed_text = re.sub(r'[^\w\s]', ' ', processed_text)
+        
         # Tokenize
-        tokens = text.split()
-        # Remove stopwords and lemmatize
-        tokens = [lemmatizer.lemmatize(token) for token in tokens if token not in stopwords_set and len(token) > 3]
-        return " ".join(tokens)
+        tokens = processed_text.split()
+        
+        # Remove stopwords and lemmatize (but preserve our compound terms)
+        processed_tokens = []
+        for token in tokens:
+            if '_' in token:  # This is a compound term we want to keep
+                processed_tokens.append(token)
+            elif token not in stopwords_set and len(token) > 3:
+                processed_tokens.append(lemmatizer.lemmatize(token))
+                
+        return " ".join(processed_tokens)
     
     for row in cursor.fetchall():
         pub_id = row['id']
@@ -1015,7 +1094,6 @@ def suggest_new_fields_with_topic_modeling(conn, author_keywords, config):
                 author_topic_counts[author_id][topic] += 1
                 # Sum scores for this topic
                 author_topic_scores[author_id][topic] = author_topic_scores[author_id].get(topic, 0) + score
-    
 
     # 6. Calculate topic dominance ratios
     print("Calculating topic dominance metrics...")
@@ -1066,22 +1144,8 @@ def suggest_new_fields_with_topic_modeling(conn, author_keywords, config):
     min_dominance_ratio = config.get('min_dominance_ratio', 0.15)  # Can be adjusted in config
 
     for topic_idx, terms in enumerate(topic_terms):
-        # Generate a name for this topic
-        primary_term = terms[0].replace('_', ' ')
-        secondary_term = None
-        for term in terms[1:5]:
-            term = term.replace('_', ' ')
-            if primary_term not in term and term not in primary_term:
-                secondary_term = term
-                break
-        
-        if not secondary_term:
-            secondary_term = terms[1].replace('_', ' ')
-        
-        primary_term = primary_term.lower()
-        secondary_term = secondary_term.lower()
-        
-        topic_name = f"{primary_term} & {secondary_term}"
+        # Generate a name for this topic using our specialized function
+        topic_name = generate_topic_name(terms)
         topic_name_mapping[topic_idx] = topic_name
         
         # Find authors associated with this topic with dominance filtering
@@ -1169,7 +1233,13 @@ def suggest_new_fields_with_topic_modeling(conn, author_keywords, config):
             print(f"\n{name}: No significant research areas identified")
 
     # 9. Calculate topic similarity matrix for field relationships
+    print("Calculating topic similarities...")
     topic_similarity = {}
+
+    # Make sure num_topics is defined
+    if 'num_topics' not in locals():
+        num_topics = config.get('num_topics', 15)
+
     for i in range(num_topics):
         for j in range(i+1, num_topics):
             # Calculate cosine similarity between topic term vectors
@@ -1178,21 +1248,32 @@ def suggest_new_fields_with_topic_modeling(conn, author_keywords, config):
                 nmf.components_[j].reshape(1, -1)
             )[0][0]
             
-            if similarity > config.get('min_topic_similarity', 0.2):
-                topic_similarity[(i, j)] = {
+            # Convert from numpy float to Python float for JSON serialization
+            similarity_value = float(similarity)
+            
+            if similarity_value > config.get('min_topic_similarity', 0.2):
+                relationship = {
+                    'topic1_id': i,
+                    'topic2_id': j,
                     'topic1_name': topic_name_mapping.get(i, f"Topic {i}"),
                     'topic2_name': topic_name_mapping.get(j, f"Topic {j}"),
-                    'similarity': similarity
+                    'similarity': similarity_value
                 }
-    
-    # Store similarity data for field relationship analysis
-    config['topic_similarity'] = topic_similarity
-    
-    # Sort suggestions by author count
-    field_suggestions.sort(key=lambda x: x['author_count'], reverse=True)
-    
-    print(f"Generated {len(field_suggestions)} field suggestions")
-    return field_suggestions
+                topic_relationships.append(relationship)
+                topic_similarity[(i, j)] = relationship
+
+        # Store similarity data for field relationship analysis
+        config['topic_similarity'] = topic_similarity
+
+        # Sort field suggestions by author count
+        field_suggestions.sort(key=lambda x: x['author_count'], reverse=True)
+
+        print(f"Generated {len(field_suggestions)} field suggestions")
+        return field_suggestions, {
+            'authors_with_topics': set(author_topic_dominance.keys()),
+            'author_best_topics': author_topic_dominance,
+            'topic_relationships': topic_relationships
+        }
 
 def analyze_topic_relationships(conn, config):
     """
@@ -1388,22 +1469,189 @@ def export_topic_analysis_results(field_suggestions, topic_relationships, output
     output_dir : str
         Directory to save output files
     """
-    import os
     
     # Create output directory if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
-    # Export field suggestions
-    with open(os.path.join(output_dir, 'topic_fields.json'), 'w') as f:
-        json.dump(field_suggestions, f, indent=2)
+    # Define a custom JSON encoder to handle problematic types
+    class CustomEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, set):
+                return list(obj)
+            elif isinstance(obj, defaultdict):
+                return dict(obj)
+            elif isinstance(obj, np.integer):
+                return int(obj)
+            elif isinstance(obj, np.floating):
+                return float(obj)
+            elif isinstance(obj, np.ndarray):
+                return obj.tolist()
+            else:
+                return super(CustomEncoder, self).default(obj)
     
-    # Export topic relationships
-    with open(os.path.join(output_dir, 'topic_relationships.json'), 'w') as f:
-        json.dump(topic_relationships, f, indent=2)
+    # Helper function to ensure objects are JSON serializable
+    def ensure_serializable(obj):
+        if isinstance(obj, set):
+            return list(obj)
+        elif isinstance(obj, defaultdict):
+            return {k: ensure_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, dict):
+            return {k: ensure_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [ensure_serializable(item) for item in obj]
+        elif isinstance(obj, (np.integer, np.int64, np.int32)):
+            return int(obj)
+        elif isinstance(obj, (np.floating, np.float64, np.float32)):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return obj
     
-    print(f"Exported topic analysis results to {output_dir}/")
+    try:
+        # Make data safe for JSON serialization
+        json_safe_suggestions = ensure_serializable(field_suggestions)
+        
+        # Export field suggestions
+        with open(os.path.join(output_dir, 'topic_fields.json'), 'w') as f:
+            json.dump(json_safe_suggestions, f, indent=2, cls=CustomEncoder)
+        
+        # Make relationships safe for JSON
+        json_safe_relationships = ensure_serializable(topic_relationships)
+        
+        # Export topic relationships
+        with open(os.path.join(output_dir, 'topic_relationships.json'), 'w') as f:
+            json.dump(json_safe_relationships, f, indent=2, cls=CustomEncoder)
+        
+        print(f"Exported topic analysis results to {output_dir}/")
+    except Exception as e:
+        print(f"Error exporting topic analysis results: {e}")
+        import traceback
+        traceback.print_exc()
  
+def populate_fields_tables(conn, suggested_fields, config):
+    """
+    Populate the fields and field_keywords tables based on suggested fields.
+    
+    Parameters:
+    -----------
+    conn : sqlite3.Connection
+        Connection to the database
+    suggested_fields : list
+        List of suggested fields from keyword analysis or topic modeling
+    config : dict
+        Configuration parameters
+        
+    Returns:
+    --------
+    int
+        Number of fields added to the database
+    """
+    import uuid
+    import datetime
+    
+    fields_added = 0
+    fields_updated = 0
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Get mapping of existing field names to their IDs
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name FROM fields")
+    existing_fields = {row['name'].lower(): row['id'] for row in cursor.fetchall()}
+    
+    print(f"Found {len(existing_fields)} existing fields in the database")
+    
+    try:
+        # Begin transaction
+        conn.execute("BEGIN TRANSACTION")
+        
+        for field in suggested_fields:
+            # Use topic modeling or keyword-based field name
+            if 'suggested_name' in field:
+                field_name = field['suggested_name']
+            else:
+                continue  # Skip if no name available
+            
+            # Check if field already exists
+            field_id = None
+            if field_name.lower() in existing_fields:
+                # Use existing ID
+                field_id = existing_fields[field_name.lower()]
+                print(f"Updating existing field '{field_name}'")
+                
+                # Update the field
+                cursor.execute("""
+                    UPDATE fields
+                    SET description = ?, updated_at = ?
+                    WHERE id = ?
+                """, (
+                    f"Auto-generated field based on publication analysis (updated)",
+                    current_time,
+                    field_id
+                ))
+                
+                # Delete existing keywords for this field
+                cursor.execute("DELETE FROM field_keywords WHERE field_id = ?", (field_id,))
+                fields_updated += 1
+            else:
+                # Generate a unique ID for the new field
+                field_id = str(uuid.uuid4())
+                
+                # Insert into fields table
+                cursor.execute("""
+                    INSERT INTO fields (id, name, description, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (
+                    field_id,
+                    field_name,
+                    f"Auto-generated field based on publication analysis",
+                    current_time,
+                    current_time
+                ))
+                existing_fields[field_name.lower()] = field_id
+                fields_added += 1
+            
+            # Insert keywords (for both new and updated fields)
+            if 'top_terms' in field:  # Topic modeling approach
+                keywords = field['top_terms']
+                for i, keyword in enumerate(keywords[:10]):  # Use top 10 terms
+                    weight = 1.0 - (i * 0.05)  # Decreasing weights: 1.0, 0.95, 0.90, ...
+                    cursor.execute("""
+                        INSERT INTO field_keywords (field_id, keyword, weight, created_at)
+                        VALUES (?, ?, ?, ?)
+                    """, (
+                        field_id,
+                        keyword,
+                        weight,
+                        current_time
+                    ))
+            elif 'keywords' in field:  # Keyword clustering approach
+                for i, (keyword, count) in enumerate(field['keywords'][:10]):
+                    # Normalize weights based on count
+                    weight = min(1.0, count / 10.0)
+                    cursor.execute("""
+                        INSERT INTO field_keywords (field_id, keyword, weight, created_at)
+                        VALUES (?, ?, ?, ?)
+                    """, (
+                        field_id,
+                        keyword,
+                        weight,
+                        current_time
+                    ))
+            
+            # Similar logic for author associations...
+        
+        # Commit the transaction
+        conn.commit()
+        print(f"Successfully added {fields_added} new fields and updated {fields_updated} existing fields")
+        return fields_added + fields_updated
+        
+    except sqlite3.Error as e:
+        conn.rollback()
+        print(f"Database error: {e}")
+        return 0
+     
 # Main Execution
 
 def main():
@@ -1421,6 +1669,8 @@ def main():
     parser.add_argument('--use-topic-modeling', action='store_true', help='Use advanced topic modeling for field suggestions')
     parser.add_argument('--export-all', action='store_true', help='Export all results to JSON files')
     parser.add_argument('--verbose', action='store_true', help='Show detailed output')
+    parser.add_argument('--populate-fields', action='store_true', 
+                    help='Populate fields and field_keywords tables with suggested fields')
     args = parser.parse_args()
     
     # File paths
@@ -1468,37 +1718,67 @@ def main():
         print("Calculating reputation scores...")
         author_reputations = calculate_reputation_scores(conn, config, impact_factors)
         
+            # Perform additional analyses if requested
+
+        
+        # Add a tracking variable for topic modeling results
+        is_topic_modeling = False
+
+        field_suggestion_method = None
+        
         # Perform additional analyses if requested
         suggested_fields = None
         if args.suggest_fields:
             if args.use_topic_modeling:
                 # Use advanced topic modeling approach
                 print("Using advanced topic modeling for field suggestions...")
-                suggested_fields = suggest_new_fields_with_topic_modeling(conn, author_keywords, config)
+                suggested_fields, topic_data = suggest_new_fields_with_topic_modeling(conn, author_keywords, config)   
+                field_suggestion_method = "topic_modeling"
+                # Store the additional data for use later
+                authors_with_topics = topic_data.get('authors_with_topics', set())
+                author_best_topics = topic_data.get('author_best_topics', defaultdict(list))
             else:
                 # Use original keyword clustering approach
                 print("Analyzing keyword patterns to suggest new fields...")
                 suggested_fields = suggest_new_fields(conn, author_keywords, config)
+                field_suggestion_method = "keyword_clustering"
+                
+            # Add this section to populate fields tables
+            if suggested_fields and args.populate_fields:
+                print("Populating fields and field_keywords tables...")
+                fields_added = populate_fields_tables(conn, suggested_fields, config)
+                print(f"Added {fields_added} new fields to the database")
         
         field_relationships = None
         topic_relationships = None
         if args.analyze_relationships:
-            if args.use_topic_modeling:
-                # Use topic relationships
+            if args.use_topic_modeling and 'topic_data' in locals() and 'topic_relationships' in topic_data:
+                # Use the topic relationships from our topic modeling results
+                print("Using topic relationships from topic modeling...")
+                topic_relationships = topic_data['topic_relationships']
+            elif args.use_topic_modeling:
+                # Fall back to analyzing from config if topic_data doesn't have relationships
                 print("Analyzing topic relationships...")
                 topic_relationships = analyze_topic_relationships(conn, config)
             else:
                 # Use original field relationships
                 print("Analyzing field relationships...")
                 field_relationships = analyze_field_relationships(conn)
-        
+
         # Export all results if requested
         if args.export_all:
             print("Exporting analysis results...")
             if args.use_topic_modeling:
+                # Make sure we have topic_relationships available
+                if 'topic_relationships' not in locals() or topic_relationships is None:
+                    if 'topic_data' in locals() and 'topic_relationships' in topic_data:
+                        topic_relationships = topic_data['topic_relationships']
+                    else:
+                        topic_relationships = []
+                        
                 export_topic_analysis_results(
-                    suggested_fields or [], 
-                    topic_relationships or [],
+                    suggested_fields, 
+                    topic_relationships,
                     output_dir
                 )
             else:
@@ -1509,7 +1789,7 @@ def main():
                     field_relationships or {}, 
                     output_dir
                 )
-        
+
         # Print results
         print("\n" + "="*80)
         print("AUTHOR KEYWORD AND REPUTATION ANALYSIS")
@@ -1523,16 +1803,36 @@ def main():
             reverse=True
         )
         
+        # Modification to the reporting section in main()
+        # Replace the current author printing loop with this:
+
+        # Use a set to track which authors we've already displayed
+        displayed_authors = set()
+
+        # Sort results based on configuration
+        sort_by = config.get('sort_by', 'reputation_score')
+        sorted_authors = sorted(
+            author_reputations.items(), 
+            key=lambda x: x[1].get(sort_by, 0), 
+            reverse=True
+        )
+
         # Limit displayed authors if not verbose
         display_limit = len(sorted_authors) if args.verbose else min(20, len(sorted_authors))
-        
+
         for i, (author_id, reputation) in enumerate(sorted_authors):
             if i >= display_limit and not args.verbose:
                 remaining = len(sorted_authors) - display_limit
                 print(f"\n... and {remaining} more authors (use --verbose to see all)")
                 break
                 
+            # Skip if we've already displayed this author
+            if author_id in displayed_authors:
+                continue
+            
+            displayed_authors.add(author_id)
             display_name = reputation['display_name']
+            # ... rest of author display code remains the same
             reputation_score = reputation['reputation_score']
             
             # Get top keywords for this author
@@ -1565,7 +1865,9 @@ def main():
                 print("No substantial keywords identified")
                 
             print("-" * 40)
-        
+
+    
+        # In the field display section:
         if suggested_fields:
             print("\n" + "="*80)
             print("SUGGESTED NEW RESEARCH FIELDS")
@@ -1580,10 +1882,12 @@ def main():
             
             display_count = min(10, len(suggested_fields))
             for i, field in enumerate(suggested_fields[:display_count]):
-                if args.use_topic_modeling:
-                    # Display topic modeling results
-                    print(f"\nSuggested Field: {field['suggested_name']}")
-                    print(f"Potential Authors: {field['author_count']}")
+                print(f"\nSuggested Field: {field['suggested_name']}")
+                print(f"Potential Authors: {field['author_count']}")
+                
+                # Check which field format we have based on our tracking variable
+                if field_suggestion_method == "topic_modeling" and 'top_terms' in field:
+                    # Topic modeling format
                     print("Associated Terms:")
                     for term in field['top_terms'][:5]:  # Show top 5 terms
                         print(f"  - {term}")
@@ -1612,53 +1916,111 @@ def main():
                             print(f"    Reputation: {reputation_score}")
                     else:
                         print("No expert information available for this field")
-                else:
-                    # Display keyword clustering results (original method)
-                    print(f"\nSuggested Field: {field['suggested_name']}")
-                    print(f"Potential Authors: {field['author_count']}")
+                elif field_suggestion_method == "keyword_clustering" and 'keywords' in field:
+                    # Keyword clustering format
                     print("Associated Keywords:")
                     for keyword, count in field['keywords'][:5]:  # Show top 5 keywords
                         print(f"  - {keyword} (appears in {count} authors)")
                 
+                # Fallback for any format (useful if the code changes later)
+                else:
+                    if 'top_terms' in field:
+                        print("Associated Terms:")
+                        for term in field['top_terms'][:5]:
+                            print(f"  - {term}")
+                    elif 'keywords' in field:
+                        print("Associated Keywords:")
+                        for keyword, count in field['keywords'][:5]:
+                            print(f"  - {keyword} (appears in {count} authors)")
+                    else:
+                        print("No term information available")
+                        
                 print("-" * 40)
             
-            # Add a section to show each author's primary research areas
+            # Modify the code that displays FACULTY PRIMARY RESEARCH AREAS
+            # Use a set to track displayed faculty
+            displayed_faculty = set()
+
+        if suggested_fields and args.use_topic_modeling and 'topic_data' in locals():
+            # Use a set to track displayed faculty
+            displayed_faculty = set()
+            
             print("\n" + "="*80)
             print("FACULTY PRIMARY RESEARCH AREAS")
             print("="*80)
             
-            # Get author IDs who have topic dominance information
-            authors_with_topics = set()
-            author_best_topics = defaultdict(list)
+            # Get the authors with topics
+            authors_with_topics = topic_data.get('authors_with_topics', set())
+            author_topic_dominance = topic_data.get('author_best_topics', {})
             
-            # Find each author's top 3 topics by combined dominance
-            for field in suggested_fields:
-                for author_info in field.get('top_authors', []):
-                    author_id = author_info['author_id']
-                    authors_with_topics.add(author_id)
-                    
-                    topic_name = field['suggested_name']
-                    combined_dominance = author_info.get('combined_dominance', 0)
-                    pub_count = author_info.get('publication_count', 0)
-                    
-                    author_best_topics[author_id].append({
-                        'topic_name': topic_name,
-                        'combined_dominance': combined_dominance,
-                        'pub_count': pub_count
-                    })
+            # Create direct lookup for author names
+            author_name_lookup = {}
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT id, display_name FROM authors")
+                for row in cursor.fetchall():
+                    author_name_lookup[row['id']] = row['display_name']
+            except Exception as e:
+                print(f"Warning: Could not retrieve author names: {e}")
             
-            # Display each author's primary research areas
+            # For each author with topic dominance information
             for author_id in authors_with_topics:
+                # Skip if already displayed
+                if author_id in displayed_faculty:
+                    continue
+                    
+                displayed_faculty.add(author_id)
                 name = author_name_lookup.get(author_id, f"Unknown ({author_id})")
                 
-                # Sort topics by combined dominance
-                topics = author_best_topics[author_id]
-                topics.sort(key=lambda x: x['combined_dominance'], reverse=True)
+                # Find topics for this author
+                topics = []
+                for field in suggested_fields:
+                    if 'top_authors' not in field:
+                        continue
+                        
+                    for author_info in field.get('top_authors', []):
+                        if not isinstance(author_info, dict):
+                            continue
+                            
+                        if author_info.get('author_id') == author_id:
+                            topics.append({
+                                'topic_name': field.get('suggested_name', 'Unknown Topic'),
+                                'combined_dominance': author_info.get('combined_dominance', 0),
+                                'pub_count': author_info.get('publication_count', 0)
+                            })
                 
-                print(f"\n{name} is best known for:")
-                for idx, topic in enumerate(topics[:3]):  # Top 3 topics
-                    dominance_pct = topic.get('combined_dominance', 0) * 100
-                    print(f"  {idx+1}. {topic['topic_name']} (dominance: {dominance_pct:.1f}%, publications: {topic['pub_count']})")
+                # If no topics found via top_authors, try author_topic_dominance
+                if not topics and author_id in author_topic_dominance:
+                    topic_scores = author_topic_dominance[author_id]
+                    for topic_id, score in topic_scores.items():
+                        if not isinstance(topic_id, int):
+                            continue
+                        
+                        # Try to find the topic name
+                        topic_name = "Unknown Topic"
+                        for field in suggested_fields:
+                            if field.get('topic_id') == topic_id:
+                                topic_name = field.get('suggested_name', topic_name)
+                                break
+                        
+                        topics.append({
+                            'topic_name': topic_name,
+                            'combined_dominance': score,
+                            'pub_count': 0  # We don't have this info here
+                        })
+                
+                # Sort topics by combined dominance
+                topics.sort(key=lambda x: x.get('combined_dominance', 0), reverse=True)
+                
+                if topics:
+                    print(f"\n{name} is best known for:")
+                    for idx, topic in enumerate(topics[:3]):  # Top 3 topics
+                        dominance_pct = topic.get('combined_dominance', 0) * 100
+                        print(f"  {idx+1}. {topic['topic_name']} (dominance: {dominance_pct:.1f}%, publications: {topic.get('pub_count', 'N/A')})")
+                else:
+                    print(f"\n{name}: No significant research areas identified")
+
+
 
         # Print field relationships if available
         if field_relationships:
@@ -1690,7 +2052,7 @@ def main():
                 print(f"\nRelated Topics: {rel['topic1_name']} & {rel['topic2_name']}")
                 print(f"Similarity: {rel['similarity']:.2f}")
                 print("-" * 40)
-    
+        
     finally:
         conn.close()
 

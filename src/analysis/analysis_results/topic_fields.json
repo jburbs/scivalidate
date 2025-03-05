@@ -1,0 +1,473 @@
+[
+  {
+    "topic_id": 6,
+    "suggested_name": "medicine & internal",
+    "top_terms": [
+      "medicine",
+      "internal medicine",
+      "internal",
+      "cancer",
+      "disease",
+      "pharmacology",
+      "pathology",
+      "psoriasis",
+      "medicine medicine",
+      "immunology"
+    ],
+    "author_ids": [
+      "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+      "0fddf7bc-c8c2-415d-99be-8c8e98db13fd",
+      "5e045c76-4510-4eff-bbb8-de97aaaf1ad5",
+      "deacbee4-88e5-4794-bd53-45010025edad",
+      "fdb49261-47d8-42f9-a1f4-0d1a0e8f96bd"
+    ],
+    "author_count": 5,
+    "top_authors": [
+      {
+        "author_id": "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+        "publication_count": 165,
+        "topic_score": 16.50482849621166,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7355603448275861
+      },
+      {
+        "author_id": "0fddf7bc-c8c2-415d-99be-8c8e98db13fd",
+        "publication_count": 57,
+        "topic_score": 5.753515147989888,
+        "dominance_ratio": 0.34859587600746583,
+        "combined_dominance": 0.44285432250755163
+      },
+      {
+        "author_id": "5e045c76-4510-4eff-bbb8-de97aaaf1ad5",
+        "publication_count": 48,
+        "topic_score": 3.419272381322227,
+        "dominance_ratio": 0.207168004327161,
+        "combined_dominance": 0.2076262986811866
+      },
+      {
+        "author_id": "deacbee4-88e5-4794-bd53-45010025edad",
+        "publication_count": 40,
+        "topic_score": 3.691124325218236,
+        "dominance_ratio": 0.22363905968883332,
+        "combined_dominance": 0.19668112104639737
+      },
+      {
+        "author_id": "fdb49261-47d8-42f9-a1f4-0d1a0e8f96bd",
+        "publication_count": 37,
+        "topic_score": 3.8027028489163275,
+        "dominance_ratio": 0.23039941613383982,
+        "combined_dominance": 0.18426095775331522
+      }
+    ]
+  },
+  {
+    "topic_id": 1,
+    "suggested_name": "crystal structure & material chemistry",
+    "top_terms": [
+      "crystal structure",
+      "crystal",
+      "material chemistry",
+      "crystallography material",
+      "crystallography",
+      "ccdc",
+      "structure determination",
+      "structure",
+      "determination",
+      "structure crystallography"
+    ],
+    "author_ids": [
+      "5e045c76-4510-4eff-bbb8-de97aaaf1ad5",
+      "22345fb4-c63e-4800-9ae1-ee8f73c6fbab",
+      "2281c85d-350b-4f7e-be3a-45c2a5a25db0",
+      "b2a370d2-5002-4b9d-9657-cd53bcda68a3"
+    ],
+    "author_count": 4,
+    "top_authors": [
+      {
+        "author_id": "5e045c76-4510-4eff-bbb8-de97aaaf1ad5",
+        "publication_count": 42,
+        "topic_score": 9.555398350221969,
+        "dominance_ratio": 0.9693354862296423,
+        "combined_dominance": 0.7333174490564017
+      },
+      {
+        "author_id": "22345fb4-c63e-4800-9ae1-ee8f73c6fbab",
+        "publication_count": 60,
+        "topic_score": 9.857679292634737,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7110974106041923
+      },
+      {
+        "author_id": "2281c85d-350b-4f7e-be3a-45c2a5a25db0",
+        "publication_count": 26,
+        "topic_score": 5.431176871753271,
+        "dominance_ratio": 0.5509589742700626,
+        "combined_dominance": 0.4677765451469385
+      },
+      {
+        "author_id": "b2a370d2-5002-4b9d-9657-cd53bcda68a3",
+        "publication_count": 15,
+        "topic_score": 3.4569244569093667,
+        "dominance_ratio": 0.3506833965974367,
+        "combined_dominance": 0.3147091468489749
+      }
+    ]
+  },
+  {
+    "topic_id": 4,
+    "suggested_name": "protein folding & thermodynamics",
+    "top_terms": [
+      "physic",
+      "thermodynamics",
+      "folding",
+      "pressure",
+      "protein folding",
+      "quantum mechanics",
+      "folding implementation",
+      "implementation",
+      "biophysics",
+      "protein"
+    ],
+    "author_ids": [
+      "bb95f732-03f9-434c-97a9-a7e6ef60d2ea",
+      "deacbee4-88e5-4794-bd53-45010025edad",
+      "22345fb4-c63e-4800-9ae1-ee8f73c6fbab"
+    ],
+    "author_count": 3,
+    "top_authors": [
+      {
+        "author_id": "bb95f732-03f9-434c-97a9-a7e6ef60d2ea",
+        "publication_count": 118,
+        "topic_score": 9.568993850713014,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.8787878787878787
+      },
+      {
+        "author_id": "deacbee4-88e5-4794-bd53-45010025edad",
+        "publication_count": 109,
+        "topic_score": 9.170982934236243,
+        "dominance_ratio": 0.9584061895444614,
+        "combined_dominance": 0.7802488811761062
+      },
+      {
+        "author_id": "22345fb4-c63e-4800-9ae1-ee8f73c6fbab",
+        "publication_count": 38,
+        "topic_score": 2.1028087474517285,
+        "dominance_ratio": 0.21975233553891793,
+        "combined_dominance": 0.16085499492656438
+      }
+    ]
+  },
+  {
+    "topic_id": 10,
+    "suggested_name": "cell biology & receptor",
+    "top_terms": [
+      "factor",
+      "receptor",
+      "growth factor",
+      "growth",
+      "fibroblast",
+      "fibroblast growth",
+      "cell biology",
+      "cell",
+      "factor receptor",
+      "biology"
+    ],
+    "author_ids": [
+      "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+      "deacbee4-88e5-4794-bd53-45010025edad",
+      "22345fb4-c63e-4800-9ae1-ee8f73c6fbab"
+    ],
+    "author_count": 3,
+    "top_authors": [
+      {
+        "author_id": "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+        "publication_count": 105,
+        "topic_score": 12.272818526512753,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7226293103448276
+      },
+      {
+        "author_id": "deacbee4-88e5-4794-bd53-45010025edad",
+        "publication_count": 69,
+        "topic_score": 4.970528224204528,
+        "dominance_ratio": 0.405002992056534,
+        "combined_dominance": 0.35273286367034307
+      },
+      {
+        "author_id": "22345fb4-c63e-4800-9ae1-ee8f73c6fbab",
+        "publication_count": 56,
+        "topic_score": 3.5443295133303745,
+        "dominance_ratio": 0.28879507227077644,
+        "combined_dominance": 0.21251413382012302
+      }
+    ]
+  },
+  {
+    "topic_id": 17,
+    "suggested_name": "citation & library",
+    "top_terms": [
+      "citation",
+      "library",
+      "information",
+      "information retrieval",
+      "retrieval",
+      "social medium",
+      "icon",
+      "medium",
+      "social",
+      "retrieval library"
+    ],
+    "author_ids": [
+      "fdb49261-47d8-42f9-a1f4-0d1a0e8f96bd",
+      "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+      "22345fb4-c63e-4800-9ae1-ee8f73c6fbab"
+    ],
+    "author_count": 3,
+    "top_authors": [
+      {
+        "author_id": "fdb49261-47d8-42f9-a1f4-0d1a0e8f96bd",
+        "publication_count": 34,
+        "topic_score": 4.708853620997269,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7211180124223602
+      },
+      {
+        "author_id": "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+        "publication_count": 23,
+        "topic_score": 3.9172821094300954,
+        "dominance_ratio": 0.8318971929733654,
+        "combined_dominance": 0.5872849316330799
+      },
+      {
+        "author_id": "22345fb4-c63e-4800-9ae1-ee8f73c6fbab",
+        "publication_count": 19,
+        "topic_score": 2.665846308942644,
+        "dominance_ratio": 0.566134886218454,
+        "combined_dominance": 0.3998086003775787
+      }
+    ]
+  },
+  {
+    "topic_id": 7,
+    "suggested_name": "programming & language",
+    "top_terms": [
+      "programming",
+      "programming language",
+      "language",
+      "crystal",
+      "crystal programming",
+      "structure crystal",
+      "crystal structure",
+      "organic chemistry programming",
+      "periodic",
+      "group periodic"
+    ],
+    "author_ids": [
+      "22345fb4-c63e-4800-9ae1-ee8f73c6fbab",
+      "2281c85d-350b-4f7e-be3a-45c2a5a25db0"
+    ],
+    "author_count": 2,
+    "top_authors": [
+      {
+        "author_id": "22345fb4-c63e-4800-9ae1-ee8f73c6fbab",
+        "publication_count": 106,
+        "topic_score": 14.522463471588598,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7196054254007398
+      },
+      {
+        "author_id": "2281c85d-350b-4f7e-be3a-45c2a5a25db0",
+        "publication_count": 12,
+        "topic_score": 3.1897485002081227,
+        "dominance_ratio": 0.2196423841208808,
+        "combined_dominance": 0.1916444057267218
+      }
+    ]
+  },
+  {
+    "topic_id": 8,
+    "suggested_name": "mass spectrometry & ionization",
+    "top_terms": [
+      "chromatography",
+      "mass spectrometry",
+      "ionization",
+      "electrospray",
+      "liquid",
+      "liquid chromatography",
+      "analytical",
+      "analytical chemistry",
+      "electrophoresis",
+      "electrospray ionization"
+    ],
+    "author_ids": [
+      "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+      "c8123885-8163-44b0-82ea-08358b91aadc"
+    ],
+    "author_count": 2,
+    "top_authors": [
+      {
+        "author_id": "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+        "publication_count": 116,
+        "topic_score": 11.693813920114291,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.725
+      },
+      {
+        "author_id": "c8123885-8163-44b0-82ea-08358b91aadc",
+        "publication_count": 48,
+        "topic_score": 6.769632073202954,
+        "dominance_ratio": 0.5789071144324135,
+        "combined_dominance": 0.6024952540752921
+      }
+    ]
+  },
+  {
+    "topic_id": 9,
+    "suggested_name": "organic chemistry & combinatorial",
+    "top_terms": [
+      "chemistry",
+      "combinatorial",
+      "combinatorial chemistry",
+      "stereochemistry",
+      "acid",
+      "synthesis",
+      "catalysis",
+      "organic chemistry",
+      "enzyme",
+      "biochemistry"
+    ],
+    "author_ids": [
+      "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+      "fdb49261-47d8-42f9-a1f4-0d1a0e8f96bd"
+    ],
+    "author_count": 2,
+    "top_authors": [
+      {
+        "author_id": "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+        "publication_count": 219,
+        "topic_score": 17.35705020156689,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7471982758620689
+      },
+      {
+        "author_id": "fdb49261-47d8-42f9-a1f4-0d1a0e8f96bd",
+        "publication_count": 63,
+        "topic_score": 4.047303408440892,
+        "dominance_ratio": 0.23317921890181123,
+        "combined_dominance": 0.20235588801387655
+      }
+    ]
+  },
+  {
+    "topic_id": 13,
+    "suggested_name": "material & composite",
+    "top_terms": [
+      "material",
+      "composite",
+      "composite material",
+      "nanotechnology",
+      "polymer",
+      "chemical",
+      "cellulose",
+      "fiber",
+      "material polymer",
+      "electrospinning"
+    ],
+    "author_ids": [
+      "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+      "fdb49261-47d8-42f9-a1f4-0d1a0e8f96bd"
+    ],
+    "author_count": 2,
+    "top_authors": [
+      {
+        "author_id": "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+        "publication_count": 112,
+        "topic_score": 11.494274426504068,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7241379310344828
+      },
+      {
+        "author_id": "fdb49261-47d8-42f9-a1f4-0d1a0e8f96bd",
+        "publication_count": 118,
+        "topic_score": 9.862569050763051,
+        "dominance_ratio": 0.8580418984969986,
+        "combined_dominance": 0.6739212544137375
+      }
+    ]
+  },
+  {
+    "topic_id": 15,
+    "suggested_name": "electron & photosystem",
+    "top_terms": [
+      "electron",
+      "photosystem",
+      "vibrio",
+      "photochemistry",
+      "electron transfer",
+      "transfer",
+      "cholerae",
+      "vibrio cholerae",
+      "oxidoreductase",
+      "photosynthesis"
+    ],
+    "author_ids": [
+      "752d271f-1918-437b-bfc5-7942e814a3b9",
+      "5e045c76-4510-4eff-bbb8-de97aaaf1ad5"
+    ],
+    "author_count": 2,
+    "top_authors": [
+      {
+        "author_id": "752d271f-1918-437b-bfc5-7942e814a3b9",
+        "publication_count": 74,
+        "topic_score": 8.834316594331248,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.9155339805825242
+      },
+      {
+        "author_id": "5e045c76-4510-4eff-bbb8-de97aaaf1ad5",
+        "publication_count": 61,
+        "topic_score": 8.807927335349756,
+        "dominance_ratio": 0.9970128692242674,
+        "combined_dominance": 0.7774742258482915
+      }
+    ]
+  },
+  {
+    "topic_id": 18,
+    "suggested_name": "typography & mathematics",
+    "top_terms": [
+      "typography",
+      "typography typography",
+      "typography chemistry",
+      "chemistry typography",
+      "mathematics",
+      "chemistry",
+      "subject",
+      "subject document",
+      "document",
+      "zeolite"
+    ],
+    "author_ids": [
+      "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+      "752d271f-1918-437b-bfc5-7942e814a3b9"
+    ],
+    "author_count": 2,
+    "top_authors": [
+      {
+        "author_id": "df880afb-f7a1-42ee-aad9-142ab6595c0d",
+        "publication_count": 13,
+        "topic_score": 5.585280324011918,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.702801724137931
+      },
+      {
+        "author_id": "752d271f-1918-437b-bfc5-7942e814a3b9",
+        "publication_count": 7,
+        "topic_score": 2.591573789722611,
+        "dominance_ratio": 0.46400066592558753,
+        "combined_dominance": 0.34518881566247434
+      }
+    ]
+  }
+]

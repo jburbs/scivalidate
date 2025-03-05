@@ -618,6 +618,8 @@ class DatabaseManager:
         - Tables for researchers, publications, venues, etc.
         - Foreign key relationships between tables
         - Indices for optimizing common queries
+        - Unique constraints to prevent duplicates
+        - Support for tracking merge candidates
         """
         with self.conn:
             # Enable foreign key constraints for data integrity
@@ -649,11 +651,24 @@ class DatabaseManager:
                 )
             """)
             
+            # Create a unique index on given_name and family_name with institution
+            # This will prevent exact duplicates while still allowing for name variations
+            self.conn.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_authors_unique_name_components 
+                ON authors(given_name, family_name, IFNULL(institution, ''))
+            """)
+
             # Author name indices for efficient searching
             self.conn.execute("CREATE INDEX IF NOT EXISTS idx_authors_family_name ON authors(family_name COLLATE NOCASE)")
             self.conn.execute("CREATE INDEX IF NOT EXISTS idx_authors_given_name ON authors(given_name COLLATE NOCASE)")
             self.conn.execute("CREATE INDEX IF NOT EXISTS idx_authors_display_name ON authors(display_name COLLATE NOCASE)")
             self.conn.execute("CREATE INDEX IF NOT EXISTS idx_authors_institution ON authors(institution)")
+            
+            # Create a unique index on display_name and institution to prevent exact duplicates
+            self.conn.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_authors_unique_name_inst 
+                ON authors(display_name, IFNULL(institution, ''))
+            """)
             
             # Author identifiers table (ORCID, email, etc.)
             self.conn.execute("""
@@ -669,6 +684,13 @@ class DatabaseManager:
                     PRIMARY KEY (author_id, identifier_type),
                     FOREIGN KEY (author_id) REFERENCES authors(id) ON DELETE CASCADE
                 )
+            """)
+            
+            # Create a unique index on ORCID values to prevent duplicate ORCIDs
+            self.conn.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_orcid 
+                ON author_identifiers(identifier_value) 
+                WHERE identifier_type = 'orcid' AND identifier_value IS NOT NULL
             """)
             
             # Publication venues table (journals, conferences)
@@ -706,6 +728,13 @@ class DatabaseManager:
                 )
             """)
             
+            # Create a unique index on DOI to prevent duplicate publications
+            self.conn.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_publications_unique_doi 
+                ON publications(doi) 
+                WHERE doi IS NOT NULL
+            """)
+            
             # Publication indices
             self.conn.execute("CREATE INDEX IF NOT EXISTS idx_publications_year ON publications(publication_year)")
             self.conn.execute("CREATE INDEX IF NOT EXISTS idx_publications_doi ON publications(doi)")
@@ -736,6 +765,12 @@ class DatabaseManager:
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (parent_field_id) REFERENCES fields(id) ON DELETE SET NULL
                 )
+            """)
+            
+            # Create a unique index on field names to prevent duplicates
+            self.conn.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_fields_unique_name 
+                ON fields(name)
             """)
             
             # Field keywords for classification
@@ -782,7 +817,45 @@ class DatabaseManager:
                     FOREIGN KEY (author2_id) REFERENCES authors(id)
                 )
             """)
-    
+            
+            # Merge candidates table for tracking potential author duplicates
+            self.conn.execute("""
+                CREATE TABLE IF NOT EXISTS merge_candidates (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    primary_author_id TEXT NOT NULL,
+                    secondary_author_id TEXT NOT NULL,
+                    reason TEXT NOT NULL,
+                    confidence REAL DEFAULT 0.0,
+                    status TEXT DEFAULT 'pending',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    resolved_at TIMESTAMP,
+                    UNIQUE(primary_author_id, secondary_author_id),
+                    FOREIGN KEY (primary_author_id) REFERENCES authors(id),
+                    FOREIGN KEY (secondary_author_id) REFERENCES authors(id)
+                )
+            """)
+            
+            # Create an index for faster lookup of pending merge candidates
+            self.conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_merge_candidates_status
+                ON merge_candidates(status)
+            """)
+            
+            # Schema migrations tracking table
+            self.conn.execute("""
+                CREATE TABLE IF NOT EXISTS schema_migrations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT UNIQUE NOT NULL,
+                    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            
+            # Record that we've initialized the schema
+            self.conn.execute("""
+                INSERT OR IGNORE INTO schema_migrations (name)
+                VALUES ('initial_schema')
+            """)
+            
     def parse_academic_name(self, full_name: str) -> Dict[str, str]:
         """
         Parse an academic name into its components.
@@ -834,71 +907,184 @@ class DatabaseManager:
             'middle_names': middle_names,
             'name_suffix': name_suffix
         }
-    
+
     def store_researcher(self, researcher: Dict) -> str:
         """
         Store or update researcher information in the database.
         
-        This method handles creating new researcher records or updating existing ones.
-        It parses names if needed and ensures all required fields are present.
+        This method checks if the researcher already exists based on name components
+        and institution before creating a new record. If found, it updates the
+        existing record with any new information.
         
         Args:
             researcher: Dictionary containing researcher information
-            
+                
         Returns:
-            str: Researcher's database ID (UUID)
+            str: Researcher's database ID
         """
-        # Generate a unique identifier for this researcher
-        author_id = str(uuid.uuid4())
-
-        # Check if the individual name parts are already present
-        if not researcher.get('given_name') or not researcher.get('family_name'):
-            # If given_name or family_name are missing, parse the full name string
-            if 'name' in researcher:
-                name_parts = self.parse_academic_name(researcher['name'])
-            else:
-                # If neither is present, raise an error
-                raise ValueError("Insufficient name information provided")
-        else:
-            # If name parts are already present, use them directly
-            name_parts = {
-                'given_name': researcher.get('given_name'),
-                'family_name': researcher.get('family_name'),
-                'middle_names': researcher.get('middle_names'),
-                'name_suffix': researcher.get('name_suffix')
-            }
-        
-        # Insert the researcher data into the database
-        with self.conn:
-            self.conn.execute("""
-                INSERT INTO authors (
-                    id, given_name, family_name, middle_names, name_suffix,
-                    department, institution, h_index, total_citations, 
-                    updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        try:
+            # Check if the individual name parts are already present
+            if not researcher.get('given_name') or not researcher.get('family_name'):
+                # If given_name or family_name are missing, parse the full name string
+                if 'name' in researcher:
+                    name_parts = self.parse_academic_name(researcher['name'])
+                    researcher['given_name'] = name_parts['given_name']
+                    researcher['family_name'] = name_parts['family_name'] 
+                    researcher['middle_names'] = name_parts['middle_names']
+                    researcher['name_suffix'] = name_parts['name_suffix']
+                else:
+                    # If neither is present, raise an error
+                    raise ValueError("Insufficient name information provided")
+            
+            # Check if this researcher already exists by given_name and family_name
+            existing = self.conn.execute("""
+                SELECT id FROM authors
+                WHERE given_name = ? AND family_name = ? 
+                AND (institution = ? OR (institution IS NULL AND ? IS NULL))
             """, (
-                author_id,
-                name_parts['given_name'],
-                name_parts['family_name'],
-                name_parts['middle_names'],
-                name_parts['name_suffix'],
-                researcher.get('department'),
-                researcher.get('institution'),
-                researcher.get('h_index'),
-                researcher.get('total_citations'),
-                datetime.now().isoformat()
-            ))
+                researcher['given_name'], 
+                researcher['family_name'], 
+                researcher.get('institution'), 
+                researcher.get('institution')
+            )).fetchone()
+            
+            if existing:
+                # If researcher exists, update with any new information
+                author_id = existing['id']
+                
+                # Update fields if provided in the researcher data
+                update_fields = []
+                params = []
+                
+                for field in ['department', 'institution', 'h_index', 'total_citations', 'middle_names']:
+                    if field in researcher and researcher[field] is not None:
+                        update_fields.append(f"{field} = ?")
+                        params.append(researcher[field])
+                
+                if update_fields:
+                    params.append(datetime.now().isoformat())
+                    params.append(author_id)
+                    
+                    with self.conn:
+                        self.conn.execute(f"""
+                            UPDATE authors 
+                            SET {', '.join(update_fields)}, updated_at = ?
+                            WHERE id = ?
+                        """, params)
+                
+                # If we have an ORCID, make sure it's linked to this author
+                if researcher.get('orcid'):
+                    # Check if this author already has an ORCID
+                    existing_orcid = self.conn.execute("""
+                        SELECT identifier_value
+                        FROM author_identifiers
+                        WHERE author_id = ? AND identifier_type = 'orcid'
+                    """, (author_id,)).fetchone()
+                    
+                    # Only add if no ORCID exists
+                    if not existing_orcid:
+                        self.store_identifiers(
+                            author_id, 
+                            researcher['orcid'], 
+                            researcher.get('email')
+                        )
+                
+                return author_id
+            
+            # If researcher doesn't exist, create a new record
+            author_id = str(uuid.uuid4())
+            
+            # Insert the researcher data into the database
+            with self.conn:
+                self.conn.execute("""
+                    INSERT INTO authors (
+                        id, given_name, family_name, middle_names, name_suffix,
+                        department, institution, h_index, total_citations, 
+                        updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    author_id,
+                    researcher['given_name'],
+                    researcher['family_name'],
+                    researcher.get('middle_names'),
+                    researcher.get('name_suffix'),
+                    researcher.get('department'),
+                    researcher.get('institution'),
+                    researcher.get('h_index'),
+                    researcher.get('total_citations'),
+                    datetime.now().isoformat()
+                ))
+            
+            # If we have an ORCID, add it immediately
+            if researcher.get('orcid'):
+                self.store_identifiers(
+                    author_id, 
+                    researcher['orcid'], 
+                    researcher.get('email')
+                )
+            
+            return author_id
+        except sqlite3.IntegrityError as e:
+            # Handle case where another process might have created the author
+            # between our check and insert (rare but possible)
+            if "UNIQUE constraint failed" in str(e):
+                # Try again to look up by name components
+                existing = self.conn.execute("""
+                    SELECT id FROM authors
+                    WHERE given_name = ? AND family_name = ? 
+                    AND (institution = ? OR (institution IS NULL AND ? IS NULL))
+                """, (
+                    researcher['given_name'], 
+                    researcher['family_name'], 
+                    researcher.get('institution'), 
+                    researcher.get('institution')
+                )).fetchone()
+                
+                if existing:
+                    return existing['id']
+            
+            # Re-raise the error if it's not what we expected or we couldn't recover
+            raise    
 
-        return author_id
+    def _update_researcher(self, author_id: str, researcher: Dict):
+        """
+        Update an existing researcher record with new information.
+        
+        Args:
+            author_id: The ID of the author to update
+            researcher: Dictionary containing updated information
+        """
+        fields_to_update = []
+        params = []
+        
+        # Check which fields should be updated
+        for field in ['department', 'institution', 'h_index', 'total_citations']:
+            if field in researcher and researcher[field] is not None:
+                fields_to_update.append(f"{field} = ?")
+                params.append(researcher[field])
+        
+        # Only update if there are fields to update
+        if fields_to_update:
+            fields_to_update.append("updated_at = ?")
+            params.append(datetime.now().isoformat())
+            params.append(author_id)
+            
+            # Execute the update query
+            with self.conn:
+                self.conn.execute(f"""
+                    UPDATE authors 
+                    SET {', '.join(fields_to_update)}
+                    WHERE id = ?
+                """, params)
 
-    
     def store_identifiers(self, author_id: str, orcid: Optional[str], email: Optional[str], 
                         match_status: MatchStatus = None) -> None:
         """
         Store researcher identifiers with verification status.
         
         Links external identifiers (ORCID, email) to a researcher profile 
-        and records the confidence level of the match.
+        and records the confidence level of the match. If an ORCID is already
+        assigned to a different author, records this as a merge candidate.
         
         Args:
             author_id: Database ID of the author
@@ -906,51 +1092,124 @@ class DatabaseManager:
             email: Email address if available
             match_status: MatchStatus indicating verification level
         """
-        if orcid:
-            # Map MatchStatus to verification values
-            # Different match types have different confidence levels
-            verification_info = {
-                MatchStatus.EXACT_MATCH_WITH_INSTITUTION: ('verified', 1.0, 'institutional_match'),
-                MatchStatus.EXACT_MATCH_DISTINCTIVE: ('probable', 0.9, 'distinctive_name'),
-                MatchStatus.EXACT_MATCH_COMMON_NAME: ('probable', 0.7, 'common_name'),
-                MatchStatus.MULTIPLE_MATCHES: ('ambiguous', 0.3, 'multiple_matches'),
-                MatchStatus.NO_MATCH: ('unverified', 0.0, 'no_match'),
-                MatchStatus.ERROR: ('error', 0.0, 'api_error')
-            }.get(match_status, ('unverified', 0.0, 'direct_input'))
-            
-            status, confidence, method = verification_info
-            
-            # Insert or update ORCID identifier
-            self.conn.execute("""
-                INSERT INTO author_identifiers (
-                    author_id, identifier_type, identifier_value,
-                    confidence_score, verification_status, verification_method,
-                    verified_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT (author_id, identifier_type) DO UPDATE SET
-                    identifier_value = excluded.identifier_value,
-                    confidence_score = excluded.confidence_score,
-                    verification_status = excluded.verification_status,
-                    verification_method = excluded.verification_method,
-                    verified_at = excluded.verified_at
-            """, (
-                author_id,
-                'orcid',
-                orcid,
-                confidence,
-                status,
-                method,
-                datetime.now().isoformat()
-            ))
+        try:
+            # First check if this ORCID already exists but with a different author_id
+            if orcid:
+                existing_orcid = self.conn.execute("""
+                    SELECT author_id FROM author_identifiers
+                    WHERE identifier_type = 'orcid'
+                    AND identifier_value = ?
+                    AND author_id != ?
+                """, (orcid, author_id)).fetchone()
+                
+                if existing_orcid:
+                    # Record this as a merge candidate
+                    with self.conn:
+                        # Record the potential merge
+                        try:
+                            self.conn.execute("""
+                                INSERT INTO merge_candidates (
+                                    primary_author_id, secondary_author_id, reason, confidence
+                                ) VALUES (?, ?, ?, ?)
+                            """, (
+                                existing_orcid['author_id'],  # Existing record as primary
+                                author_id,                   # New record as secondary
+                                f"ORCID conflict: {orcid}",
+                                0.9  # High confidence since ORCID is supposed to be unique
+                            ))
+                            logging.info(f"ORCID {orcid} conflict detected. Recorded merge candidate.")
+                        except sqlite3.IntegrityError:
+                            # Merge candidate already exists, just log it
+                            logging.info(f"ORCID {orcid} conflict already recorded as merge candidate.")
+                    
+                    # Still store other identifiers
+                    if email:
+                        try:
+                            with self.conn:
+                                self.conn.execute("""
+                                    INSERT INTO author_identifiers 
+                                        (author_id, identifier_type, identifier_value)
+                                    VALUES (?, 'email', ?)
+                                """, (author_id, email))
+                        except sqlite3.IntegrityError:
+                            # Already exists, update it
+                            with self.conn:
+                                self.conn.execute("""
+                                    UPDATE author_identifiers
+                                    SET identifier_value = ?
+                                    WHERE author_id = ? AND identifier_type = 'email'
+                                """, (email, author_id))
+                    
+                    return
 
-        # Store email if provided
-        if email:
-            self.conn.execute("""
-                INSERT INTO author_identifiers (author_id, identifier_type, identifier_value)
-                VALUES (?, ?, ?)
-                ON CONFLICT (author_id, identifier_type) DO UPDATE SET
-                    identifier_value = excluded.identifier_value
-            """, (author_id, 'email', email))
+                # Map MatchStatus to verification values
+                verification_info = {
+                    MatchStatus.EXACT_MATCH_WITH_INSTITUTION: ('verified', 1.0, 'institutional_match'),
+                    MatchStatus.EXACT_MATCH_DISTINCTIVE: ('probable', 0.9, 'distinctive_name'),
+                    MatchStatus.EXACT_MATCH_COMMON_NAME: ('probable', 0.7, 'common_name'),
+                    MatchStatus.MULTIPLE_MATCHES: ('ambiguous', 0.3, 'multiple_matches'),
+                    MatchStatus.NO_MATCH: ('unverified', 0.0, 'no_match'),
+                    MatchStatus.ERROR: ('error', 0.0, 'api_error')
+                }.get(match_status, ('unverified', 0.0, 'direct_input'))
+                
+                status, confidence, method = verification_info
+                
+                # Insert or update ORCID identifier
+                try:
+                    with self.conn:
+                        self.conn.execute("""
+                            INSERT INTO author_identifiers (
+                                author_id, identifier_type, identifier_value,
+                                confidence_score, verification_status, verification_method,
+                                verified_at
+                            ) VALUES (?, 'orcid', ?, ?, ?, ?, ?)
+                        """, (
+                            author_id,
+                            orcid,
+                            confidence,
+                            status,
+                            method,
+                            datetime.now().isoformat()
+                        ))
+                except sqlite3.IntegrityError:
+                    # Already exists, update it
+                    with self.conn:
+                        self.conn.execute("""
+                            UPDATE author_identifiers
+                            SET identifier_value = ?,
+                                confidence_score = ?,
+                                verification_status = ?,
+                                verification_method = ?,
+                                verified_at = ?
+                            WHERE author_id = ? AND identifier_type = 'orcid'
+                        """, (
+                            orcid,
+                            confidence,
+                            status,
+                            method,
+                            datetime.now().isoformat(),
+                            author_id
+                        ))
+
+            # Store email if provided
+            if email:
+                try:
+                    with self.conn:
+                        self.conn.execute("""
+                            INSERT INTO author_identifiers 
+                                (author_id, identifier_type, identifier_value)
+                            VALUES (?, 'email', ?)
+                        """, (author_id, email))
+                except sqlite3.IntegrityError:
+                    # Already exists, update it
+                    with self.conn:
+                        self.conn.execute("""
+                            UPDATE author_identifiers
+                            SET identifier_value = ?
+                            WHERE author_id = ? AND identifier_type = 'email'
+                        """, (email, author_id))
+        except sqlite3.Error as e:
+            logging.error(f"Error storing identifiers: {e}")
 
     def store_venue(self, venue_data: Dict, metrics: Optional['VenueMetrics'] = None) -> Optional[str]:
         """
@@ -994,10 +1253,10 @@ class DatabaseManager:
 
     def store_publication(self, pub_data: Dict, venue_metrics: Optional['VenueMetrics'] = None) -> str:
         """
-        Store a publication with its metadata.
+        Store a publication with its metadata, handling missing titles and existing records.
         
-        Creates a new publication record and optionally associates it with
-        a venue. Handles required fields and edge cases.
+        Publications with DOIs are always preserved, even with missing titles.
+        When a title is missing but a DOI exists, a placeholder title is used.
         
         Args:
             pub_data: Dictionary containing publication information
@@ -1006,40 +1265,100 @@ class DatabaseManager:
         Returns:
             str: Publication's database ID or None if rejected
         """
-        # Validate required fields - title is mandatory
-        if not pub_data.get('title'):
-            # Skip publications without titles
-            self.logger.warning(f"Skipping publication without title: {pub_data}")
-            return None  # Return None to indicate no publication was stored
+        # Handle missing titles for publications with DOIs
+        doi = pub_data.get('doi')
+        
+        if not pub_data.get('title') and doi:
+            # Generate a placeholder title using the DOI
+            pub_data['title'] = f"Publication with DOI: {doi}"
+            self.logger.info(f"Using placeholder title for publication with DOI: {doi}")
+        elif not pub_data.get('title') and not doi:
+            # Only skip publications that have neither title nor DOI
+            # These can't be reliably identified or deduplicated
+            self.logger.warning(f"Skipping publication without title and DOI")
+            return None
+        
+        # Check if this publication already exists by DOI
+        if doi:
+            existing = self.conn.execute("""
+                SELECT id, citation_count, title, updated_at
+                FROM publications
+                WHERE doi = ?
+            """, (doi,)).fetchone()
+            
+            if existing:
+                # Publication already exists - update it if necessary
+                pub_id = existing['id']
+                
+                updates_needed = []
+                params = []
+                
+                # If we have a real title and the existing record has a placeholder, update it
+                if (pub_data.get('title') and existing['title'] and 
+                    existing['title'].startswith("Publication with DOI:")):
+                    updates_needed.append("title = ?")
+                    params.append(pub_data['title'])
+                
+                # Update citation count if the new data has a higher count
+                new_citation_count = pub_data.get('citations', 0)
+                if new_citation_count > (existing['citation_count'] or 0):
+                    updates_needed.append("citation_count = ?")
+                    params.append(new_citation_count)
+                
+                # If we have updates to make
+                if updates_needed:
+                    params.append(datetime.now().isoformat())
+                    params.append(pub_id)
+                    
+                    self.conn.execute(f"""
+                        UPDATE publications
+                        SET {', '.join(updates_needed)}, updated_at = ?
+                        WHERE id = ?
+                    """, params)
+                
+                return pub_id
         
         # Generate a unique ID for this publication
         pub_id = str(uuid.uuid4())
         
-        # First store venue if it exists
+        # Store venue if it exists
         venue_id = None
         if venue := pub_data.get('venue'):
             venue_id = self.store_venue(venue, venue_metrics)
         
-        with self.conn:
-            # Store main publication record
-            self.conn.execute("""
-                INSERT INTO publications (
-                    id, title, venue_id, publication_year,
-                    doi, citation_count, type, abstract,
-                    keywords, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                pub_id,
-                pub_data['title'],
-                venue_id,
-                pub_data.get('year'),
-                pub_data.get('doi'),
-                pub_data.get('citations', 0),
-                pub_data.get('type', 'article'),
-                pub_data.get('abstract'),
-                json.dumps([c['name'] for c in pub_data.get('concepts', [])]),
-                datetime.now().isoformat()
-            ))
+        try:
+            with self.conn:
+                # Store main publication record
+                self.conn.execute("""
+                    INSERT INTO publications (
+                        id, title, venue_id, publication_year,
+                        doi, citation_count, type, abstract,
+                        keywords, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    pub_id,
+                    pub_data['title'],
+                    venue_id,
+                    pub_data.get('year'),
+                    doi,
+                    pub_data.get('citations', 0),
+                    pub_data.get('type', 'article'),
+                    pub_data.get('abstract'),
+                    json.dumps([c['name'] for c in pub_data.get('concepts', [])]),
+                    datetime.now().isoformat()
+                ))
+        except sqlite3.IntegrityError as e:
+            # Handle race condition where publication was added between our check and insert
+            if "UNIQUE constraint failed: publications.doi" in str(e) and doi:
+                existing = self.conn.execute("""
+                    SELECT id FROM publications WHERE doi = ?
+                """, (doi,)).fetchone()
+                
+                if existing:
+                    return existing['id']
+            
+            # Re-raise other integrity errors
+            raise
         
         return pub_id
 
@@ -1070,8 +1389,7 @@ class DatabaseManager:
                 datetime.now().isoformat()
             ))
 
-    def update_collaboration_network(self, author1_id: str, author2_id: str, 
-                                   pub_year: int):
+    def update_collaboration_network(self, author1_id: str, author2_id: str, pub_year: int):
         """
         Update or create a collaboration record between two authors.
         
@@ -1083,41 +1401,47 @@ class DatabaseManager:
             author2_id: Second author's database ID
             pub_year: Year of collaboration
         """
-        # Ensure consistent ordering of author IDs
-        # (this prevents duplicate entries for the same collaboration)
-        if author1_id >= author2_id:  # Lexicographically compare
-            author1_id, author2_id = author2_id, author1_id
-            
-        with self.conn:
-            # Check if collaboration exists
-            existing = self.conn.execute("""
-                SELECT collaboration_count, first_collaboration
-                FROM author_collaborations
-                WHERE author1_id = ? AND author2_id = ?
-            """, (author1_id, author2_id)).fetchone()
-            
-            if existing:
-                # Update existing collaboration
-                self.conn.execute("""
-                    UPDATE author_collaborations
-                    SET collaboration_count = collaboration_count + 1,
-                        last_collaboration = MAX(last_collaboration, ?),
-                        updated_at = ?
+        try:
+            # Ensure consistent ordering of author IDs
+            if author1_id >= author2_id:  # Lexicographically compare
+                author1_id, author2_id = author2_id, author1_id
+                
+            with self.conn:
+                # First check if the collaboration exists
+                existing = self.conn.execute("""
+                    SELECT collaboration_count, first_collaboration, last_collaboration
+                    FROM author_collaborations
                     WHERE author1_id = ? AND author2_id = ?
-                """, (pub_year, datetime.now().isoformat(), author1_id, author2_id))
-            else:
-                # Create new collaboration
-                self.conn.execute("""
-                    INSERT INTO author_collaborations (
-                        author1_id, author2_id, collaboration_count,
-                        first_collaboration, last_collaboration,
-                        created_at, updated_at
-                    ) VALUES (?, ?, 1, ?, ?, ?, ?)
-                """, (
-                    author1_id, author2_id, pub_year, pub_year,
-                    datetime.now().isoformat(), datetime.now().isoformat()
-                ))
-
+                """, (author1_id, author2_id)).fetchone()
+                
+                current_time = datetime.now().isoformat()
+                
+                if existing:
+                    # Update existing collaboration
+                    self.conn.execute("""
+                        UPDATE author_collaborations
+                        SET 
+                            collaboration_count = collaboration_count + 1,
+                            first_collaboration = MIN(?, first_collaboration),
+                            last_collaboration = MAX(?, last_collaboration),
+                            updated_at = ?
+                        WHERE author1_id = ? AND author2_id = ?
+                    """, (pub_year, pub_year, current_time, author1_id, author2_id))
+                else:
+                    # Create new collaboration
+                    self.conn.execute("""
+                        INSERT INTO author_collaborations (
+                            author1_id, author2_id, collaboration_count,
+                            first_collaboration, last_collaboration,
+                            created_at, updated_at
+                        ) VALUES (?, ?, 1, ?, ?, ?, ?)
+                    """, (
+                        author1_id, author2_id, pub_year, pub_year,
+                        current_time, current_time
+                    ))
+        except sqlite3.Error as e:
+            logging.error(f"Error updating collaboration network: {e}")
+    
     def get_author_publications(self, author_id: str) -> List[Dict]:
         """
         Retrieve all publications for an author with full metadata.
@@ -1337,8 +1661,8 @@ class ResearcherProcessor:
         Process a single researcher's complete profile.
         
         This is the main entry point for processing a researcher, handling:
-        1. Storing basic researcher info
-        2. Finding ORCID match
+        1. Finding ORCID match
+        2. Storing researcher info with ORCID
         3. Fetching and processing publications
         4. Building collaboration network
         5. Calculating expertise metrics
@@ -1350,22 +1674,24 @@ class ResearcherProcessor:
             Optional[str]: Researcher's database ID if successful
         """
         try:
-            # Store basic researcher info
-            self.logger.info(f"Storing researcher info for {faculty['name']}")
-            author_id = self.db.store_researcher(faculty)
-            self.logger.info(f"Stored researcher {faculty['name']} with ID: {author_id}")
-
-            # Find ORCID match
+            # Find ORCID match FIRST
             self.logger.info(f"Searching for ORCID match for {faculty['name']}")
             orcid_result = await self._find_orcid_match(faculty)
             if not orcid_result or orcid_result.status == MatchStatus.ERROR:
                 self.logger.warning(f"No ORCID match found for {faculty['name']}")
-                return None
+                # Continue processing without ORCID
+            elif orcid_result.orcid:
+                self.logger.info(f"ORCID match found for {faculty['name']}: {orcid_result.orcid}")
+                # Add ORCID to faculty data so it's stored with the researcher
+                faculty['orcid'] = orcid_result.orcid
                 
-            self.logger.info(f"ORCID match found for {faculty['name']}: {orcid_result.orcid}")
+            # Store basic researcher info (now with ORCID if found)
+            self.logger.info(f"Storing researcher info for {faculty['name']}")
+            author_id = self.db.store_researcher(faculty)
+            self.logger.info(f"Stored researcher {faculty['name']} with ID: {author_id}")
 
-            # Store ORCID if found
-            if orcid_result.orcid:
+            # Also explicitly store ORCID as identifier if found
+            if orcid_result and orcid_result.orcid:
                 self.logger.info(f"Storing ORCID and email for {faculty['name']}")
                 self.db.store_identifiers(
                     author_id, 
@@ -1373,9 +1699,11 @@ class ResearcherProcessor:
                     faculty.get('email'),
                     orcid_result.status
                 )
-            else:
-                self.logger.warning(f"No ORCID to store for {faculty['name']}")
             
+            # Skip publication processing if no ORCID
+            if not orcid_result or not orcid_result.orcid:
+                return author_id
+                
             # Fetch and process publications
             publications = await self._fetch_publications(orcid_result.orcid)
             
@@ -1416,9 +1744,15 @@ class ResearcherProcessor:
                 # Update collaboration network
                 pub_year = pub.get('year', 0)
                 for coauthor in pub['authors']:
-                    if coauthor.get('orcid') and coauthor.get('orcid') != orcid_result.orcid:
+                    # Skip if this is the faculty member themselves (by name or ORCID)
+                    if (coauthor.get('orcid') == orcid_result.orcid or 
+                        coauthor.get('name') == faculty['name']):
+                        continue
+                        
+                    # Only process coauthors with ORCIDs to avoid ambiguity
+                    if coauthor.get('orcid'):
                         coauthor_id = await self._get_or_create_coauthor(coauthor)
-                        if coauthor_id:
+                        if coauthor_id and coauthor_id != author_id:  # Extra check to avoid self-links
                             self.db.update_collaboration_network(
                                 author_id,
                                 coauthor_id,
@@ -1439,7 +1773,7 @@ class ResearcherProcessor:
             self.logger.error(f"Error processing {faculty['name']}: {str(e)}")
             self.logger.exception("Full traceback:")
             return None
-
+        
     async def _find_orcid_match(self, faculty: Dict) -> Optional[ORCIDResult]:
         """
         Find ORCID match for a faculty member.
@@ -1870,101 +2204,105 @@ class ResearcherProcessor:
 
     async def _get_or_create_coauthor(self, coauthor_data: Dict) -> Optional[str]:
         """
-        Look up or create a coauthor record, avoiding duplication.
-        
-        When processing publications, this helper method ensures that
-        coauthors are properly recorded in the system without creating
-        duplicate entries. It looks up by ORCID when available or by
-        name as a fallback.
-        
-        Args:
-            coauthor_data: Dictionary containing coauthor information
-            
-        Returns:
-            Optional[str]: Coauthor's database ID or None if creation failed
+        Look up or create a coauthor record, avoiding duplicates and handling self-references.
         """
         try:
-            # Extract name and check it exists
-            author_name = coauthor_data.get('name')
-
-            if not author_name:
-                self.logger.warning(f"Coauthor missing name, skipping")
-                return None
-                
-            # Check for ORCID and normalize format
+            # Extract ORCID if available and normalize it
             orcid = coauthor_data.get('orcid')
             if orcid and isinstance(orcid, str) and 'orcid.org' in orcid:
-                # Extract just the ID portion from URLs like https://orcid.org/0000-0002-4391-5564
+                # Extract just the ID portion from URLs
                 orcid = orcid.split('/')[-1]
-
-            # First priority: Try to find by ORCID if available
-            if orcid:
+                coauthor_data['orcid'] = orcid
+                
+                # FIRST PRIORITY: Try to find by ORCID
                 existing = self.db.conn.execute("""
                     SELECT author_id 
                     FROM author_identifiers
                     WHERE identifier_type = 'orcid'
                     AND identifier_value = ?
                 """, (orcid,)).fetchone()
-        
+                
                 if existing:
-                    # Author already exists with this ORCID
+                    # Author already exists with this ORCID - no need to process further
                     return existing['author_id']
             
-            # Second priority: Try to find by name
+            # Extract name and check it exists
+            author_name = coauthor_data.get('name')
+            if not author_name:
+                self.logger.warning(f"Coauthor missing name, skipping")
+                return None
+            
+            # Check if this coauthor is already being processed as a faculty member
+            # Get all faculty ORCIDs to compare against
+            faculty_orcids = self.db.conn.execute("""
+                SELECT identifier_value 
+                FROM author_identifiers 
+                WHERE identifier_type = 'orcid'
+            """).fetchall()
+            
+            faculty_orcids_set = {row['identifier_value'] for row in faculty_orcids if row['identifier_value']}
+            
+            # If this coauthor's ORCID matches a faculty ORCID, return that faculty's ID
+            if orcid and orcid in faculty_orcids_set:
+                existing = self.db.conn.execute("""
+                    SELECT author_id 
+                    FROM author_identifiers
+                    WHERE identifier_type = 'orcid' AND identifier_value = ?
+                """, (orcid,)).fetchone()
+                
+                if existing:
+                    return existing['author_id']
+            
+            # Parse the name into components
+            name_parts = self.db.parse_academic_name(author_name)
+            
+            # Get institution if available - SAFELY
+            institution_name = None
+            institutions = coauthor_data.get('institutions', [])
+            if institutions and isinstance(institutions, list) and len(institutions) > 0:
+                first_inst = institutions[0]
+                if isinstance(first_inst, dict) and 'name' in first_inst:
+                    institution_name = first_inst['name']
+            
+            # Try to find by name components
             existing = self.db.conn.execute("""
                 SELECT id 
                 FROM authors
-                WHERE display_name = ?
-            """, (author_name,)).fetchone()
+                WHERE given_name = ? AND family_name = ? 
+                AND (institution = ? OR (institution IS NULL AND ? IS NULL))
+            """, (name_parts['given_name'], 
+                name_parts['family_name'], 
+                institution_name, 
+                institution_name)).fetchone()
 
             if existing:
-                # Author exists with this name
+                # Author exists with matching name components
                 author_id = existing['id']
                 
-                # If we have an ORCID but it's not in the database, add it
-                if orcid and not self.db.conn.execute("""
-                    SELECT 1 FROM author_identifiers 
-                    WHERE author_id = ? AND identifier_type = 'ORCID'
-                """, (author_id,)).fetchone():
+                # If we have an ORCID, add it to the existing record
+                if orcid:
                     self.db.store_identifiers(author_id, orcid, None)
                     
                 return author_id
             
             # If we get here, we need to create a new author record
-            
-            # Safely extract institution information
-            institution_name = None
-            institutions = coauthor_data.get('institutions', [])
-    
-            if institutions and len(institutions) > 0:
-                institution_name = institutions[0].get('name')
-  
-            # Parse the name into components
-            # Assuming format is typically "First Last" or similar
-            name_parts = author_name.split()
-            family_name = name_parts[-1] if name_parts else ""
-            given_name = " ".join(name_parts[:-1]) if len(name_parts) > 1 else ""
-
-            # Create new author record
             author_data = {
-                'given_name': given_name,
-                'family_name': family_name,
-                'middle_names': None,
-                'name_suffix': None,
-                'preferred_name': None,
-                'department': None,
+                'given_name': name_parts['given_name'],
+                'family_name': name_parts['family_name'],
+                'middle_names': name_parts['middle_names'],
+                'name_suffix': name_parts['name_suffix'],
                 'institution': institution_name
             }
+            
+            # If we have an ORCID, include it
+            if orcid:
+                author_data['orcid'] = orcid
 
             # Store the author record
             author_id = self.db.store_researcher(author_data)
-
-            # Store ORCID if available
-            if orcid:
-                self.db.store_identifiers(author_id, orcid, None)
                 
             return author_id
-            
+                
         except Exception as e:
             self.logger.error(f"Error processing coauthor {coauthor_data.get('name')}: {str(e)}")
             return None
