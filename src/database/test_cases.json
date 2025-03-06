@@ -1,0 +1,115 @@
+[
+  {
+    "name": "Montelione Case",
+    "steps": [
+      {
+        "action": "create_author",
+        "data": {
+          "given_name": "G.T.",
+          "family_name": "Montelione",
+          "institution": "Rensselaer Polytechnic Institute"
+        }
+      },
+      {
+        "action": "add_orcid",
+        "data": {
+          "orcid": "0000-0002-9440-3059"
+        }
+      },
+      {
+        "action": "add_publications",
+        "data": {
+          "count": 3
+        }
+      },
+      {
+        "action": "create_author",
+        "data": {
+          "given_name": "Gaetano",
+          "family_name": "Montelione",
+          "department": "Chemistry and Chemical Biology",
+          "institution": "Rensselaer Polytechnic Institute"
+        }
+      },
+      {
+        "action": "add_orcid",
+        "data": {
+          "orcid": "0000-0002-9440-3059",
+          "match_status": "EXACT_MATCH_WITH_INSTITUTION"
+        }
+      },
+      {
+        "action": "verify",
+        "data": {
+          "expect_single_record": true,
+          "expected_family_name": "Montelione",
+          "expected_given_name": "Gaetano",
+          "verify_publications_transferred": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "Complex Foreign Key Case",
+    "steps": [
+      {
+        "action": "create_author",
+        "data": {
+          "given_name": "P.",
+          "family_name": "Dinolfo",
+          "institution": null
+        }
+      },
+      {
+        "action": "add_orcid",
+        "data": {
+          "orcid": "0000-0003-0153-0006"
+        }
+      },
+      {
+        "action": "add_publications",
+        "data": {
+          "count": 5
+        }
+      },
+      {
+        "action": "add_collaborations",
+        "data": {
+          "count": 2
+        }
+      },
+      {
+        "action": "add_field_expertise",
+        "data": {
+          "count": 2
+        }
+      },
+      {
+        "action": "create_author",
+        "data": {
+          "given_name": "Peter",
+          "family_name": "Dinolfo",
+          "department": "Chemistry and Chemical Biology",
+          "institution": "Rensselaer Polytechnic Institute"
+        }
+      },
+      {
+        "action": "add_orcid",
+        "data": {
+          "orcid": "0000-0003-0153-0006",
+          "match_status": "EXACT_MATCH_WITH_INSTITUTION"
+        }
+      },
+      {
+        "action": "verify",
+        "data": {
+          "expect_single_record": true,
+          "expected_family_name": "Dinolfo",
+          "expected_given_name": "Peter",
+          "verify_publications_transferred": true,
+          "verify_collaborations_transferred": true
+        }
+      }
+    ]
+  }
+]
