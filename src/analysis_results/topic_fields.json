@@ -1,0 +1,434 @@
+[
+  {
+    "topic_id": 13,
+    "suggested_name": "material & composite",
+    "top_terms": [
+      "material",
+      "composite",
+      "carbon",
+      "composite material",
+      "nanotechnology",
+      "fiber",
+      "environmental",
+      "chemical",
+      "organic",
+      "cellulose"
+    ],
+    "author_ids": [
+      "06df3e0b-7eff-460d-928b-b1737b49997f",
+      "4dc41a94-d7f7-4ddf-9a4a-252947b0de51",
+      "67c235b6-61a8-4d99-89c0-5d70bc566072",
+      "713aa89b-3120-4e1b-a3da-50cef8804a3d",
+      "caea81ab-fe64-4c74-8c3d-42a95c6483c4",
+      "6997aecc-3aae-4e40-911c-8d5333121a5b"
+    ],
+    "author_count": 6,
+    "top_authors": [
+      {
+        "author_id": "06df3e0b-7eff-460d-928b-b1737b49997f",
+        "publication_count": 123,
+        "topic_score": 13.951929030698697,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7265086206896552
+      },
+      {
+        "author_id": "4dc41a94-d7f7-4ddf-9a4a-252947b0de51",
+        "publication_count": 59,
+        "topic_score": 8.719466444523878,
+        "dominance_ratio": 0.6249649367724183,
+        "combined_dominance": 0.709783148048385
+      },
+      {
+        "author_id": "67c235b6-61a8-4d99-89c0-5d70bc566072",
+        "publication_count": 94,
+        "topic_score": 8.538490589170122,
+        "dominance_ratio": 0.6119935508833737,
+        "combined_dominance": 0.4867805787860634
+      },
+      {
+        "author_id": "713aa89b-3120-4e1b-a3da-50cef8804a3d",
+        "publication_count": 29,
+        "topic_score": 2.712235203622287,
+        "dominance_ratio": 0.1943985808453085,
+        "combined_dominance": 0.3650263750127686
+      },
+      {
+        "author_id": "caea81ab-fe64-4c74-8c3d-42a95c6483c4",
+        "publication_count": 37,
+        "topic_score": 3.073133128970772,
+        "dominance_ratio": 0.22026582289867577,
+        "combined_dominance": 0.2024469455942904
+      },
+      {
+        "author_id": "6997aecc-3aae-4e40-911c-8d5333121a5b",
+        "publication_count": 21,
+        "topic_score": 2.4692519375059385,
+        "dominance_ratio": 0.17698283384848046,
+        "combined_dominance": 0.15722131702726966
+      }
+    ]
+  },
+  {
+    "topic_id": 4,
+    "suggested_name": "NMR & spectroscopy",
+    "top_terms": [
+      "physic",
+      "spectroscopy",
+      "nuclear magnetic resonance",
+      "thermodynamics",
+      "protein",
+      "quantum mechanics",
+      "nuclear magnetic resonance spectroscopy",
+      "chemistry",
+      "crystallography",
+      "pressure"
+    ],
+    "author_ids": [
+      "01ec8f49-fc61-422a-9faf-96b2a7b3aa2a",
+      "46766305-014a-450f-ac8b-c72620ba46e2",
+      "aa33d04c-694b-478f-9350-dfc6fb638f7a",
+      "caea81ab-fe64-4c74-8c3d-42a95c6483c4",
+      "06df3e0b-7eff-460d-928b-b1737b49997f"
+    ],
+    "author_count": 5,
+    "top_authors": [
+      {
+        "author_id": "01ec8f49-fc61-422a-9faf-96b2a7b3aa2a",
+        "publication_count": 140,
+        "topic_score": 11.541326601657591,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.8404682274247491
+      },
+      {
+        "author_id": "46766305-014a-450f-ac8b-c72620ba46e2",
+        "publication_count": 127,
+        "topic_score": 9.116306822633192,
+        "dominance_ratio": 0.7898837921564309,
+        "combined_dominance": 0.745342896933744
+      },
+      {
+        "author_id": "aa33d04c-694b-478f-9350-dfc6fb638f7a",
+        "publication_count": 152,
+        "topic_score": 11.496378775244096,
+        "dominance_ratio": 0.9961054887393067,
+        "combined_dominance": 0.725387282314802
+      },
+      {
+        "author_id": "caea81ab-fe64-4c74-8c3d-42a95c6483c4",
+        "publication_count": 57,
+        "topic_score": 3.7953719156086017,
+        "dominance_ratio": 0.3288505772866268,
+        "combined_dominance": 0.30454323018759527
+      },
+      {
+        "author_id": "06df3e0b-7eff-460d-928b-b1737b49997f",
+        "publication_count": 31,
+        "topic_score": 1.7669612504696561,
+        "dominance_ratio": 0.15309862647989542,
+        "combined_dominance": 0.11385007301868541
+      }
+    ]
+  },
+  {
+    "topic_id": 6,
+    "suggested_name": "medicine & internal",
+    "top_terms": [
+      "medicine",
+      "internal",
+      "internal medicine",
+      "cancer",
+      "disease",
+      "medicine medicine",
+      "pharmacology",
+      "pathology",
+      "psoriasis",
+      "immunology"
+    ],
+    "author_ids": [
+      "06df3e0b-7eff-460d-928b-b1737b49997f",
+      "b206b86e-ce02-4987-9083-e37f29b0ad67",
+      "caea81ab-fe64-4c74-8c3d-42a95c6483c4",
+      "01ec8f49-fc61-422a-9faf-96b2a7b3aa2a",
+      "67c235b6-61a8-4d99-89c0-5d70bc566072"
+    ],
+    "author_count": 5,
+    "top_authors": [
+      {
+        "author_id": "06df3e0b-7eff-460d-928b-b1737b49997f",
+        "publication_count": 175,
+        "topic_score": 18.092659500798163,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7377155172413793
+      },
+      {
+        "author_id": "b206b86e-ce02-4987-9083-e37f29b0ad67",
+        "publication_count": 58,
+        "topic_score": 6.163966057783006,
+        "dominance_ratio": 0.34068877809318643,
+        "combined_dominance": 0.4408077260605793
+      },
+      {
+        "author_id": "caea81ab-fe64-4c74-8c3d-42a95c6483c4",
+        "publication_count": 50,
+        "topic_score": 3.851873610071015,
+        "dominance_ratio": 0.21289703760251988,
+        "combined_dominance": 0.2142453176261117
+      },
+      {
+        "author_id": "01ec8f49-fc61-422a-9faf-96b2a7b3aa2a",
+        "publication_count": 39,
+        "topic_score": 4.255668443560927,
+        "dominance_ratio": 0.23521519560864929,
+        "combined_dominance": 0.2037810717086632
+      },
+      {
+        "author_id": "67c235b6-61a8-4d99-89c0-5d70bc566072",
+        "publication_count": 32,
+        "topic_score": 3.6564603012668235,
+        "dominance_ratio": 0.20209634195047543,
+        "combined_dominance": 0.16134321576284832
+      }
+    ]
+  },
+  {
+    "topic_id": 1,
+    "suggested_name": "crystal & material chemistry",
+    "top_terms": [
+      "crystal",
+      "crystal structure",
+      "material chemistry",
+      "crystallography material",
+      "crystallography",
+      "ccdc",
+      "structure",
+      "structure determination",
+      "determination",
+      "material"
+    ],
+    "author_ids": [
+      "caea81ab-fe64-4c74-8c3d-42a95c6483c4",
+      "aa33d04c-694b-478f-9350-dfc6fb638f7a",
+      "cbb23a64-c3a9-422c-bfc8-2f8edc8a5a7b",
+      "038fa660-9871-40d1-85b2-59c0e6a68b12"
+    ],
+    "author_count": 4,
+    "top_authors": [
+      {
+        "author_id": "caea81ab-fe64-4c74-8c3d-42a95c6483c4",
+        "publication_count": 42,
+        "topic_score": 8.153085975148786,
+        "dominance_ratio": 0.9419030690446754,
+        "combined_dominance": 0.714114757026925
+      },
+      {
+        "author_id": "aa33d04c-694b-478f-9350-dfc6fb638f7a",
+        "publication_count": 61,
+        "topic_score": 8.655971344713898,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7112823674475955
+      },
+      {
+        "author_id": "cbb23a64-c3a9-422c-bfc8-2f8edc8a5a7b",
+        "publication_count": 28,
+        "topic_score": 4.768316448706589,
+        "dominance_ratio": 0.5508701749132459,
+        "combined_dominance": 0.47403017507085105
+      },
+      {
+        "author_id": "038fa660-9871-40d1-85b2-59c0e6a68b12",
+        "publication_count": 15,
+        "topic_score": 2.953985804893508,
+        "dominance_ratio": 0.3412656635811847,
+        "combined_dominance": 0.3081167337375985
+      }
+    ]
+  },
+  {
+    "topic_id": 2,
+    "suggested_name": "organic chemistry & stereochemistry",
+    "top_terms": [
+      "chemistry",
+      "stereochemistry",
+      "enzyme",
+      "combinatorial",
+      "combinatorial chemistry",
+      "acid",
+      "organic chemistry",
+      "synthesis",
+      "biochemistry",
+      "catalysis"
+    ],
+    "author_ids": [
+      "06df3e0b-7eff-460d-928b-b1737b49997f",
+      "7686d2e4-bd54-4ab6-b13e-0cc409e0bf97",
+      "aa33d04c-694b-478f-9350-dfc6fb638f7a",
+      "67c235b6-61a8-4d99-89c0-5d70bc566072"
+    ],
+    "author_count": 4,
+    "top_authors": [
+      {
+        "author_id": "06df3e0b-7eff-460d-928b-b1737b49997f",
+        "publication_count": 184,
+        "topic_score": 8.415886137952443,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7396551724137931
+      },
+      {
+        "author_id": "7686d2e4-bd54-4ab6-b13e-0cc409e0bf97",
+        "publication_count": 77,
+        "topic_score": 3.752672780556417,
+        "dominance_ratio": 0.4459034638828217,
+        "combined_dominance": 0.5364042693781694
+      },
+      {
+        "author_id": "aa33d04c-694b-478f-9350-dfc6fb638f7a",
+        "publication_count": 63,
+        "topic_score": 2.3856935026746435,
+        "dominance_ratio": 0.28347502135468233,
+        "combined_dominance": 0.2100847960826796
+      },
+      {
+        "author_id": "67c235b6-61a8-4d99-89c0-5d70bc566072",
+        "publication_count": 40,
+        "topic_score": 1.882487219984125,
+        "dominance_ratio": 0.22368259136668023,
+        "combined_dominance": 0.18142253445357054
+      }
+    ]
+  },
+  {
+    "topic_id": 7,
+    "suggested_name": "programming & language",
+    "top_terms": [
+      "programming",
+      "programming language",
+      "language",
+      "crystal programming",
+      "crystal",
+      "citation",
+      "information",
+      "information retrieval",
+      "retrieval",
+      "library"
+    ],
+    "author_ids": [
+      "aa33d04c-694b-478f-9350-dfc6fb638f7a",
+      "67c235b6-61a8-4d99-89c0-5d70bc566072",
+      "cbb23a64-c3a9-422c-bfc8-2f8edc8a5a7b",
+      "06df3e0b-7eff-460d-928b-b1737b49997f"
+    ],
+    "author_count": 4,
+    "top_authors": [
+      {
+        "author_id": "aa33d04c-694b-478f-9350-dfc6fb638f7a",
+        "publication_count": 125,
+        "topic_score": 15.94758913742361,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.7231196054254007
+      },
+      {
+        "author_id": "67c235b6-61a8-4d99-89c0-5d70bc566072",
+        "publication_count": 35,
+        "topic_score": 3.2252108177024654,
+        "dominance_ratio": 0.20223814332750673,
+        "combined_dominance": 0.16330583076403732
+      },
+      {
+        "author_id": "cbb23a64-c3a9-422c-bfc8-2f8edc8a5a7b",
+        "publication_count": 12,
+        "topic_score": 2.837596517592491,
+        "dominance_ratio": 0.17793263252146432,
+        "combined_dominance": 0.16244757960713027
+      },
+      {
+        "author_id": "06df3e0b-7eff-460d-928b-b1737b49997f",
+        "publication_count": 23,
+        "topic_score": 2.927895155320092,
+        "dominance_ratio": 0.1835948449693446,
+        "combined_dominance": 0.13347328803026534
+      }
+    ]
+  },
+  {
+    "topic_id": 10,
+    "suggested_name": "cell biology & receptor",
+    "top_terms": [
+      "factor",
+      "receptor",
+      "growth factor",
+      "growth",
+      "fibroblast",
+      "fibroblast growth",
+      "cell",
+      "cell biology",
+      "biology",
+      "transcription"
+    ],
+    "author_ids": [
+      "06df3e0b-7eff-460d-928b-b1737b49997f",
+      "01ec8f49-fc61-422a-9faf-96b2a7b3aa2a",
+      "aa33d04c-694b-478f-9350-dfc6fb638f7a"
+    ],
+    "author_count": 3,
+    "top_authors": [
+      {
+        "author_id": "06df3e0b-7eff-460d-928b-b1737b49997f",
+        "publication_count": 113,
+        "topic_score": 10.815761504668929,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.724353448275862
+      },
+      {
+        "author_id": "01ec8f49-fc61-422a-9faf-96b2a7b3aa2a",
+        "publication_count": 69,
+        "topic_score": 4.908124379490979,
+        "dominance_ratio": 0.45379369518940005,
+        "combined_dominance": 0.3868863558633493
+      },
+      {
+        "author_id": "aa33d04c-694b-478f-9350-dfc6fb638f7a",
+        "publication_count": 58,
+        "topic_score": 3.286738235744264,
+        "dominance_ratio": 0.3038841263581349,
+        "combined_dominance": 0.22344638536808037
+      }
+    ]
+  },
+  {
+    "topic_id": 8,
+    "suggested_name": "mass spectrometry & ionization",
+    "top_terms": [
+      "chromatography",
+      "mass spectrometry",
+      "ionization",
+      "electrospray",
+      "liquid",
+      "liquid chromatography",
+      "analytical",
+      "analytical chemistry",
+      "electrophoresis",
+      "electrospray ionization"
+    ],
+    "author_ids": [
+      "06df3e0b-7eff-460d-928b-b1737b49997f",
+      "28126291-273c-4ea8-905b-a87d1e007374"
+    ],
+    "author_count": 2,
+    "top_authors": [
+      {
+        "author_id": "06df3e0b-7eff-460d-928b-b1737b49997f",
+        "publication_count": 132,
+        "topic_score": 13.86773059317896,
+        "dominance_ratio": 1.0,
+        "combined_dominance": 0.728448275862069
+      },
+      {
+        "author_id": "28126291-273c-4ea8-905b-a87d1e007374",
+        "publication_count": 49,
+        "topic_score": 7.333950870272291,
+        "dominance_ratio": 0.5288501114868498,
+        "combined_dominance": 0.5715649410544934
+      }
+    ]
+  }
+]
