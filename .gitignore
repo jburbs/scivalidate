@@ -94,3 +94,8 @@ node_modules/
 bower_components/
 # Local Netlify folder
 .netlify
+
+# Test Files
+
+database/test.py
+database/test_cases.json

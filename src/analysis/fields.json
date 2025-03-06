@@ -1,0 +1,67 @@
+{
+    "CHEMISTRY": {
+        "ORGCHEM": {
+            "name": "Organic Chemistry",
+            "keywords": [
+                "organic synthesis",
+                "total synthesis",
+                "medicinal chemistry",
+                "natural products",
+                "polymer chemistry",
+                "organometallics",
+                "heterocycles",
+                "stereochemistry",
+                "catalysis"
+            ]
+        },
+        "INORGCHEM": {
+            "name": "Inorganic Chemistry",
+            "keywords": [
+                "coordination chemistry",
+                "solid state chemistry",
+                "materials chemistry",
+                "crystal engineering",
+                "metal complexes",
+                "crystallography",
+                "bioinorganic"
+            ]
+        },
+        "PCHEM": {
+            "name": "Physical Chemistry",
+            "keywords": [
+                "spectroscopy",
+                "kinetics",
+                "thermodynamics",
+                "quantum chemistry",
+                "computational chemistry",
+                "surface chemistry",
+                "photochemistry",
+                "electrochemistry"
+            ]
+        },
+        "ANALYT": {
+            "name": "Analytical Chemistry",
+            "keywords": [
+                "mass spectrometry",
+                "chromatography",
+                "spectroscopic analysis",
+                "electroanalytical",
+                "separation science",
+                "chemical sensing",
+                "analytical instrumentation"
+            ]
+        },
+        "BIOCHEM": {
+            "name": "Biochemistry",
+            "keywords": [
+                "protein chemistry",
+                "enzymology",
+                "molecular biology",
+                "biophysical chemistry",
+                "metabolomics",
+                "structural biology",
+                "biomolecular chemistry"
+            ]
+        }
+    }
+}

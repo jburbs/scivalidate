@@ -1,0 +1,48 @@
+{
+    "// Reputation score calculation parameters": "",
+    "h_index_weight": 0.3,
+    "citation_weight": 0.3,
+    "productivity_weight": 0.2,
+    "expertise_weight": 0.2,
+    "recency_weight": 0.1,
+    "impact_factor_weight": 0.1,
+    "max_score": 10.0,
+    "default_normalization": 1.0,
+    "min_authors_for_normalization": 2,
+    
+    "// Field extraction parameters": "",
+    "min_keyword_count": 1,
+    "max_keywords_per_author": 10,
+    "keyword_weights": {
+      "defined_keyword": 3.0,
+      "title_word": 2.0,
+      "abstract_word": 1.0
+    },
+    "keyword_min_length": 4,
+    
+    "// Topic modeling parameters": "",
+    "num_topics": 20,
+    "max_tfidf_features": 8000,
+    "min_document_frequency": 3,
+    "max_document_frequency": 0.8,
+    "min_topic_publications": 2,
+    "min_authors_per_topic": 2,
+    "min_topic_similarity": 0.25,
+    
+    "// Field classification parameters": "",
+    "field_classification": {
+      "min_similarity": 0.7,
+      "use_parent_fields": true,
+      "max_fields_per_author": 3
+    },
+    
+    "// Field suggestion parameters": "",
+    "min_keyword_weight": 2.0,
+    "min_field_keyword_count": 2,
+    "min_cluster_size": 2,
+    
+    "// Visualization settings": "",
+    "display_detailed_scores": true,
+    "sort_by": "reputation_score",
+    "skip_authors_without_keywords": true
+  }

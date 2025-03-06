@@ -63,12 +63,12 @@ async def main():
     
     # Define file paths for database and configuration
     db_path = 'scivalidate.db'
-    config_path = 'config.json'
-    fields_path = 'fields.json'
+    config_path = './analysis/config.json'
+    fields_path = './analysis/fields.json'
     
     # Load faculty data from JSON file
     logger.info("Loading faculty data")
-    with open('../data_collection/faculty_data_emails.json', 'r') as f:
+    with open('./data_collection/faculty_data_emails.json', 'r') as f:
         faculty_data = json.load(f)
     
     logger.info("Initializing database and configurations...")

@@ -56,13 +56,16 @@ class MatchStatus(Enum):
         MULTIPLE_MATCHES: Multiple potential matches found (low confidence)
         NO_MATCH: No matches found
         ERROR: Error occurred during matching process
+        OPENALEX_DERIVED: ORCID obtained from OpenAlex author data (high confidence)
     """
     EXACT_MATCH_DISTINCTIVE = "exact_match_distinctive"
     EXACT_MATCH_WITH_INSTITUTION = "exact_match_institution"
     EXACT_MATCH_COMMON_NAME = "exact_match_common"
     MULTIPLE_MATCHES = "multiple_matches"
     NO_MATCH = "no_match"
+    OPENALEX_DERIVED = "openalex_derived"
     ERROR = "error"
+
 
 @dataclass
 class ORCIDResult:
@@ -905,7 +908,8 @@ class DatabaseManager:
             'name_suffix': name_suffix
         }
 
-    def store_researcher(self, researcher: Dict) -> str:
+
+    def store_researcher(self, researcher: Dict, match_status: Optional[MatchStatus] = MatchStatus.OPENALEX_DERIVED) -> str:
         """
         Store or update researcher information in the database.
         
@@ -915,9 +919,10 @@ class DatabaseManager:
         
         Args:
             researcher: Dictionary containing researcher information
+            match_status: Status of any ORCID match, indicating confidence level
                 
         Returns:
-            str: Researcher's database ID
+            str: Researcher's database ID after any merges
         """
         try:
             # Check if the individual name parts are already present
@@ -980,11 +985,15 @@ class DatabaseManager:
                     
                     # Only add if no ORCID exists
                     if not existing_orcid:
-                        self.store_identifiers(
+                        final_author_id = self.store_identifiers(
                             author_id, 
                             researcher['orcid'], 
-                            researcher.get('email')
+                            researcher.get('email'),
+                            match_status
                         )
+                        # Use the potentially updated author ID after ORCID conflict resolution
+                        if final_author_id:
+                            author_id = final_author_id
                 
                 return author_id
             
@@ -1014,11 +1023,15 @@ class DatabaseManager:
             
             # If we have an ORCID, add it immediately
             if researcher.get('orcid'):
-                self.store_identifiers(
+                final_author_id = self.store_identifiers(
                     author_id, 
                     researcher['orcid'], 
-                    researcher.get('email')
+                    researcher.get('email'),
+                    match_status
                 )
+                # Use the potentially updated author ID after ORCID conflict resolution
+                if final_author_id:
+                    author_id = final_author_id
             
             return author_id
         except sqlite3.IntegrityError as e:
@@ -1041,7 +1054,7 @@ class DatabaseManager:
                     return existing['id']
             
             # Re-raise the error if it's not what we expected or we couldn't recover
-            raise    
+            raise
 
     def _update_researcher(self, author_id: str, researcher: Dict):
         """
@@ -1075,10 +1088,23 @@ class DatabaseManager:
                 """, params)
 
     def store_identifiers(self, author_id: str, orcid: Optional[str], email: Optional[str], 
-                        match_status: MatchStatus = None) -> None:
+                        match_status: Optional[MatchStatus] = None) -> Optional[str]:
+        """
+        Store or update identifiers for an author, handling potential merges.
+        
+        Args:
+            author_id: ID of the author
+            orcid: ORCID identifier
+            email: Email address
+            match_status: Confidence level of the ORCID match
+            
+        Returns:
+            The final author ID after any merges, or None if there was an error
+        """
         try:
+            final_author_id = author_id  # Start with the original ID
+            
             if orcid:
-                logging.info(f"Checking ORCID {orcid} for author {author_id}")
 
                 # Find if this ORCID already exists
                 existing_orcid = self.conn.execute("""
@@ -1093,23 +1119,26 @@ class DatabaseManager:
                     self._resolve_orcid_conflict(author_id, existing_orcid['author_id'])
 
                     # Use the existing author ID after merge
-                    author_id = existing_orcid['author_id']
+                    final_author_id = existing_orcid['author_id']
                 
                 # After merging or confirming no conflict, insert or update ORCID
-                status_str = match_status.value
-                print("Match Status:", status_str)
-                self._insert_or_update_identifier(author_id, 'orcid', orcid, status_str)
+                status_str = match_status.value if match_status else MatchStatus.OPENALEX_DERIVED.value
+                self._insert_or_update_identifier(final_author_id, 'orcid', orcid, status_str)
 
             # Handle email insertion/update
             if email:
-                status_str = match_status.value
-                self._insert_or_update_identifier(author_id, 'email', email, status_str)
+                status_str = match_status.value if match_status else MatchStatus.OPENALEX_DERIVED.value
+                self._insert_or_update_identifier(final_author_id, 'email', email, status_str)
+
+            # Return the possibly updated author ID
+            return final_author_id
 
         except sqlite3.Error as e:
             logging.error(f"Error storing identifiers: {e}")
+            return None
 
     def _insert_or_update_identifier(self, author_id: str, identifier_type: str, identifier_value: str, 
-                                    confidence_score: float = 0.0, verification_status: str = 'unverified', 
+                                    confidence_score: float = 0.0, verification_status: str = None, 
                                     verification_method: str = 'direct_input') -> None:
         """
         Insert a new identifier or update the existing one for an author.
@@ -1123,6 +1152,29 @@ class DatabaseManager:
             verification_method: How the identifier was verified (default: 'direct_input').
         """
         try:
+            if isinstance(confidence_score, MatchStatus):
+                confidence_score = confidence_score.value
+            # Determine appropriate verification status if none provided
+            if verification_status is None:
+                if identifier_type == 'orcid':
+                    # For ORCIDs, base verification on the confidence score/match status
+                    if confidence_score in ('exact_match_institution'):
+                        verification_status = 'verified'
+                    elif confidence_score in ( 'exact_match_distinctive'):
+                        verification_status = 'highly probable'
+                    elif confidence_score in ('openalex_derived'):
+                        verification_status = 'from OpenAlex'
+                    elif confidence_score in ('exact_match_common'):
+                        verification_status = 'probable'
+                    else:
+                        verification_status = 'unverified'
+                elif identifier_type == 'email':
+                    # For emails in the input, mark as probable
+                    verification_status = 'probable'
+                else:
+                    # Default for other identifier types
+                    verification_status = 'unverified'
+                    
             # Use INSERT OR REPLACE to either add a new identifier or update the existing one
             with self.conn:
                 self.conn.execute("""
@@ -1147,40 +1199,92 @@ class DatabaseManager:
                     datetime.now().isoformat()
                 ))
 
-            logging.info(f"{identifier_type.capitalize()} '{identifier_value}' stored/updated for author {author_id}")
-
         except sqlite3.Error as e:
             logging.error(f"Failed to store/update {identifier_type} for author {author_id}: {e}")
 
     def _resolve_orcid_conflict(self, new_author_id: str, existing_author_id: str) -> None:
+        """
+        Resolve an ORCID conflict using a two-phase merge approach that works around
+        the unique constraint by temporarily modifying the secondary record.
+        """
         try:
             logging.info(f"Merging records: {new_author_id} → {existing_author_id}")
 
+            # Get information about both authors
+            new_author = self.conn.execute("SELECT * FROM authors WHERE id = ?", 
+                                        (new_author_id,)).fetchone()
+            existing_author = self.conn.execute("SELECT * FROM authors WHERE id = ?", 
+                                            (existing_author_id,)).fetchone()
+            
+            if not new_author or not existing_author:
+                logging.warning("Cannot merge - one or both authors not found")
+                return
+            
+            # PHASE 1: Temporarily rename the secondary record to avoid constraint conflicts
             with self.conn:
-                self.conn.execute("BEGIN TRANSACTION")
-
-                # Merge publications
+                # Add a timestamp to make the name unique
+                temp_suffix = f"_MERGING_{int(datetime.now().timestamp())}"
+                self.conn.execute("""
+                    UPDATE authors 
+                    SET given_name = given_name || ?, family_name = family_name || ?
+                    WHERE id = ?
+                """, (temp_suffix, temp_suffix, new_author_id))
+                
+                logging.info(f"Temporarily renamed author {new_author_id} to avoid constraint conflicts")
+                
+                # Update primary record with better information if needed
+                update_fields = []
+                params = []
+                
+                # For given name, prefer non-abbreviated version (e.g., "Gaetano" over "G.T.")
+                if new_author['given_name'] and (
+                    (len(new_author['given_name']) > len(existing_author['given_name']) 
+                    and '.' not in new_author['given_name']) or
+                    ('.' in existing_author['given_name'] and '.' not in new_author['given_name'])
+                ):
+                    update_fields.append("given_name = ?")
+                    params.append(new_author['given_name'].replace(temp_suffix, ""))
+                    logging.info(f"Will update primary name from '{existing_author['given_name']}' to '{new_author['given_name']}'")
+                
+                # For other fields, take the new value if existing is empty
+                if new_author['department'] and not existing_author['department']:
+                    update_fields.append("department = ?")
+                    params.append(new_author['department'])
+                
+                if new_author['institution'] and not existing_author['institution']:
+                    update_fields.append("institution = ?")
+                    params.append(new_author['institution'])
+                
+                # Apply updates if needed
+                if update_fields and params:
+                    params.append(existing_author_id)
+                    self.conn.execute(f"""
+                        UPDATE authors 
+                        SET {', '.join(update_fields)}
+                        WHERE id = ?
+                    """, params)
+                    logging.info(f"Updated primary record with fields: {', '.join(update_fields)}")
+            
+            # PHASE 2: Transfer relationships and delete secondary record
+            with self.conn:
+                # Transfer all relationships from secondary to primary record
+                
+                # Publications
                 self.conn.execute("""
                     INSERT OR IGNORE INTO author_publications
                     (author_id, publication_id, author_position, contribution_type, created_at)
                     SELECT ?, publication_id, author_position, contribution_type, created_at
-                    FROM author_publications
-                    WHERE author_id = ?
+                    FROM author_publications WHERE author_id = ?
                 """, (existing_author_id, new_author_id))
                 self.conn.execute("DELETE FROM author_publications WHERE author_id = ?", (new_author_id,))
-
-                # Merge collaborations
-                self.conn.execute("""
-                    UPDATE author_collaborations SET author1_id = ?
-                    WHERE author1_id = ?
-                """, (existing_author_id, new_author_id))
                 
-                self.conn.execute("""
-                    UPDATE author_collaborations SET author2_id = ?
-                    WHERE author2_id = ?
-                """, (existing_author_id, new_author_id))
-
-                # Merge field expertise
+                # Collaborations
+                self.conn.execute("UPDATE author_collaborations SET author1_id = ? WHERE author1_id = ?", 
+                                (existing_author_id, new_author_id))
+                self.conn.execute("UPDATE author_collaborations SET author2_id = ? WHERE author2_id = ?", 
+                                (existing_author_id, new_author_id))
+                
+                # Field expertise
                 self.conn.execute("""
                     INSERT OR IGNORE INTO author_fields
                     (author_id, field_id, expertise_score, publication_count, citation_count, last_calculated)
@@ -1188,8 +1292,8 @@ class DatabaseManager:
                     FROM author_fields WHERE author_id = ?
                 """, (existing_author_id, new_author_id))
                 self.conn.execute("DELETE FROM author_fields WHERE author_id = ?", (new_author_id,))
-
-                # Merge identifiers (except ORCID, which we already handled)
+                
+                # Identifiers (except ORCID, which is what caused the conflict)
                 self.conn.execute("""
                     INSERT OR IGNORE INTO author_identifiers
                     (author_id, identifier_type, identifier_value, confidence_score, verification_status, verification_method)
@@ -1197,26 +1301,23 @@ class DatabaseManager:
                     FROM author_identifiers WHERE author_id = ? AND identifier_type != 'orcid'
                 """, (existing_author_id, new_author_id))
                 self.conn.execute("DELETE FROM author_identifiers WHERE author_id = ?", (new_author_id,))
-
-                # Update merge candidates
-                self.conn.execute("""
-                    UPDATE merge_candidates SET primary_author_id = ? WHERE primary_author_id = ?
-                """, (existing_author_id, new_author_id))
                 
-                self.conn.execute("""
-                    UPDATE merge_candidates SET secondary_author_id = ? WHERE secondary_author_id = ?
-                """, (existing_author_id, new_author_id))
-
-                # Delete the now-merged author entry
+                # Now delete the secondary record
                 self.conn.execute("DELETE FROM authors WHERE id = ?", (new_author_id,))
-
-                self.conn.execute("COMMIT")
-                logging.info(f"Merge successful: {new_author_id} → {existing_author_id}")
-
+                
+                # Verify deletion
+                remaining = self.conn.execute("SELECT COUNT(*) as count FROM authors WHERE id = ?", 
+                                        (new_author_id,)).fetchone()
+                if remaining and remaining['count'] > 0:
+                    logging.warning(f"Failed to delete merged author {new_author_id}")
+                else:
+                    logging.info(f"Successfully deleted merged author {new_author_id}")
+            
+            logging.info(f"Merge successful: {new_author_id} → {existing_author_id}")
+            
         except sqlite3.Error as e:
-            self.conn.execute("ROLLBACK")
-            logging.error(f"Failed to merge authors: {e}")
-
+            logging.error(f"Error during merge: {str(e)}")      
+                             
     def store_venue(self, venue_data: Dict, metrics: Optional['VenueMetrics'] = None) -> Optional[str]:
         """
         Store publication venue with impact metrics.
@@ -1661,23 +1762,8 @@ class ResearcherProcessor:
         if self.session:
             await self.session.close()
 
+
     async def process_researcher(self, faculty: Dict) -> Optional[str]:
-        """
-        Process a single researcher's complete profile.
-        
-        This is the main entry point for processing a researcher, handling:
-        1. Finding ORCID match
-        2. Storing researcher info with ORCID
-        3. Fetching and processing publications
-        4. Building collaboration network
-        5. Calculating expertise metrics
-        
-        Args:
-            faculty: Dictionary containing faculty member information
-            
-        Returns:
-            Optional[str]: Researcher's database ID if successful
-        """
         try:
             # Find ORCID match FIRST
             self.logger.info(f"Searching for ORCID match for {faculty['name']}")
@@ -1692,7 +1778,13 @@ class ResearcherProcessor:
                 
             # Store basic researcher info (now with ORCID if found)
             self.logger.info(f"Storing researcher info for {faculty['name']}")
-            author_id = self.db.store_researcher(faculty)
+            
+            # Pass the match status if we have an ORCID result
+            if orcid_result and orcid_result.orcid:
+                author_id = self.db.store_researcher(faculty, orcid_result.status)
+            else:
+                author_id = self.db.store_researcher(faculty)
+                
             self.logger.info(f"Stored researcher {faculty['name']} with ID: {author_id}")
 
             # Also explicitly store ORCID as identifier if found
@@ -2286,7 +2378,7 @@ class ResearcherProcessor:
                 
                 # If we have an ORCID, add it to the existing record
                 if orcid:
-                    self.db.store_identifiers(author_id, orcid, None)
+                    self.db.store_identifiers(author_id, orcid, MatchStatus.OPENALEX_DERIVED.value)
                     
                 return author_id
             
