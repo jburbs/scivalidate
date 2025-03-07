@@ -68,6 +68,7 @@ async def get_faculty_list():
         conn = get_db()
         
         # Get basic information for all faculty members directly from authors table
+        # UPDATED to include reputation_score in the query
         faculty = conn.execute("""
             SELECT 
                 id,
@@ -75,7 +76,8 @@ async def get_faculty_list():
                 department,
                 institution,
                 h_index,
-                total_citations
+                total_citations,
+                reputation_score
             FROM authors
             ORDER BY display_name
         """).fetchall()
@@ -504,75 +506,6 @@ async def get_faculty_reputation(faculty_id: str):
         faculty_data['coauthor_count'] = coauthor_count['count'] if coauthor_count else 0
         
         return faculty_data
-        
-    except sqlite3.Error as e:
-        logger.error(f"Database error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
-    finally:
-        if 'conn' in locals():
-            conn.close()
-
-# Modified endpoints to work both with and without /api prefix
-@app.get("/faculty")
-@app.get("/api/faculty")
-async def get_faculty_list():
-    """
-    Get a list of all faculty members with their basic information.
-    Adapted to work with the updated schema.
-    """
-    logger.debug("Fetching faculty list")
-    
-    try:
-        conn = get_db()
-        
-        # Get basic information for all faculty members directly from authors table
-        # UPDATED to include reputation_score in the query
-        faculty = conn.execute("""
-            SELECT 
-                id,
-                display_name,
-                department,
-                institution,
-                h_index,
-                total_citations,
-                reputation_score
-            FROM authors
-            ORDER BY display_name
-        """).fetchall()
-        
-        # Convert rows to dictionaries for JSON response
-        faculty_list = []
-        
-        for row in faculty:
-            author_data = dict(row)
-            
-            # Get publication count
-            pub_count = conn.execute("""
-                SELECT COUNT(*) as publication_count
-                FROM author_publications
-                WHERE author_id = ?
-            """, (row['id'],)).fetchone()
-            
-            if pub_count:
-                author_data['publication_count'] = pub_count['publication_count']
-            else:
-                author_data['publication_count'] = 0
-            
-            # Get latest publication year
-            latest_pub = conn.execute("""
-                SELECT MAX(p.publication_year) as latest_year
-                FROM author_publications ap
-                JOIN publications p ON ap.publication_id = p.id
-                WHERE ap.author_id = ?
-            """, (row['id'],)).fetchone()
-            
-            if latest_pub and latest_pub['latest_year']:
-                author_data['latest_publication_year'] = latest_pub['latest_year']
-            
-            faculty_list.append(author_data)
-        
-        logger.debug(f"Successfully fetched {len(faculty_list)} faculty members")
-        return faculty_list
         
     except sqlite3.Error as e:
         logger.error(f"Database error: {str(e)}")
