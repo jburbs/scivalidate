@@ -1,0 +1,2 @@
+# Redirect all paths to index.html
+/example/*  /example/index.html  200
