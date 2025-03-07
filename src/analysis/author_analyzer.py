@@ -1734,24 +1734,45 @@ def associate_authors_with_fields(conn, author_keywords, suggested_fields, confi
                             if isinstance(author_info, dict) and author_info.get('author_id') == author_id:
                                 # Use the dominance ratio or combined dominance as expertise score
                                 expertise_score = author_info.get('combined_dominance', author_info.get('dominance_ratio', 0.0))
+                                publication_count = author_info.get('publication_count', 0)
                                 if expertise_score >= min_score_threshold:
                                     field_scores[field_id] = max(expertise_score, field_scores.get(field_id, 0.0))
             
             # Store the scores in author_fields table
             for field_id, score in field_scores.items():
-                # Publication count is a placeholder here - would need additional query to get accurate count
+                # Get publication count for this author in this field
+                # This query finds publications by this author that contain keywords from this field
+                cursor.execute("""
+                    SELECT 
+                        COUNT(DISTINCT p.id) as pub_count,
+                        SUM(p.citation_count) as citation_sum
+                    FROM 
+                        author_publications ap
+                    JOIN 
+                        publications p ON ap.publication_id = p.id
+                    JOIN 
+                        field_keywords fk ON fk.field_id = ?
+                    WHERE 
+                        ap.author_id = ?
+                        AND (
+                            p.title LIKE '%' || fk.keyword || '%'
+                            OR p.abstract LIKE '%' || fk.keyword || '%'
+                            OR p.keywords LIKE '%' || fk.keyword || '%'
+                        )
+                """, (field_id, author_id))
+                
+                result = cursor.fetchone()
+                publication_count = result['pub_count'] if result and result['pub_count'] else 0
+                citation_count = result['citation_sum'] if result and result['citation_sum'] else 0
+                
                 cursor.execute("""
                     INSERT INTO author_fields (
                         author_id, field_id, expertise_score, 
-                        publication_count, last_calculated
-                    ) VALUES (?, ?, ?, ?, ?)
-                    ON CONFLICT(author_id, field_id) DO UPDATE SET
-                        expertise_score = ?,
-                        last_calculated = ?
+                        publication_count, citation_count, last_calculated
+                    ) VALUES (?, ?, ?, ?, ?, ?)
                 """, (
                     author_id, field_id, score, 
-                    0, current_time,
-                    score, current_time
+                    publication_count, citation_count, current_time
                 ))
                 associations_count += 1
         
@@ -1764,7 +1785,7 @@ def associate_authors_with_fields(conn, author_keywords, suggested_fields, confi
         conn.rollback()
         print(f"Database error: {e}")
         return 0
-
+    
 def save_reputation_scores_to_database(conn, author_reputations):
     """
     Save calculated reputation scores to the database.
