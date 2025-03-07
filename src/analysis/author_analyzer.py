@@ -1765,6 +1765,113 @@ def associate_authors_with_fields(conn, author_keywords, suggested_fields, confi
         print(f"Database error: {e}")
         return 0
 
+def save_reputation_scores_to_database(conn, author_reputations):
+    """
+    Save calculated reputation scores to the database.
+    
+    This function adds reputation scores to the authors table or creates
+    a new author_reputation table if needed.
+    
+    Parameters:
+    -----------
+    conn : sqlite3.Connection
+        Connection to the database
+    author_reputations : dict
+        Dictionary of author IDs to their reputation information
+        
+    Returns:
+    --------
+    int
+        Number of author records updated
+    """
+    import sqlite3
+    
+    # First, check if 'reputation_score' column exists in authors table
+    cursor = conn.cursor()
+    cursor.execute("PRAGMA table_info(authors)")
+    columns = [row['name'] for row in cursor.fetchall()]
+    
+    updates_count = 0
+    
+    try:
+        # Begin transaction
+        conn.execute("BEGIN TRANSACTION")
+        
+        # If reputation_score column doesn't exist, add it
+        if 'reputation_score' not in columns:
+            print("Adding reputation_score column to authors table...")
+            conn.execute("ALTER TABLE authors ADD COLUMN reputation_score REAL")
+        
+        # Create a separate table for detailed reputation data if it doesn't exist
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS author_reputation_details (
+            author_id TEXT PRIMARY KEY,
+            h_index_component REAL,
+            citation_component REAL,
+            productivity_component REAL,
+            recency_factor REAL,
+            expertise_component REAL,
+            field_normalization REAL,
+            last_calculated TEXT,
+            FOREIGN KEY (author_id) REFERENCES authors (id)
+        )
+        """)
+        
+        # Update authors table with reputation scores
+        for author_id, data in author_reputations.items():
+            # Update main reputation score
+            conn.execute("""
+                UPDATE authors
+                SET reputation_score = ?
+                WHERE id = ?
+            """, (data['reputation_score'], author_id))
+            
+            # Store detailed components in the separate table
+            if 'score_components' in data:
+                components = data['score_components']
+                conn.execute("""
+                    INSERT INTO author_reputation_details (
+                        author_id, h_index_component, citation_component,
+                        productivity_component, recency_factor,
+                        expertise_component, field_normalization, last_calculated
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                    ON CONFLICT(author_id) DO UPDATE SET
+                        h_index_component = ?,
+                        citation_component = ?,
+                        productivity_component = ?,
+                        recency_factor = ?,
+                        expertise_component = ?,
+                        field_normalization = ?,
+                        last_calculated = CURRENT_TIMESTAMP
+                """, (
+                    author_id,
+                    components.get('h_index_component', 0),
+                    components.get('citation_component', 0),
+                    components.get('productivity_component', 0),
+                    components.get('recency_factor', 0),
+                    components.get('expertise_component', 0),
+                    components.get('field_normalization', 1.0),
+                    # Repeat values for the UPDATE part
+                    components.get('h_index_component', 0),
+                    components.get('citation_component', 0),
+                    components.get('productivity_component', 0),
+                    components.get('recency_factor', 0),
+                    components.get('expertise_component', 0),
+                    components.get('field_normalization', 1.0)
+                ))
+            
+            updates_count += 1
+        
+        # Commit the transaction
+        conn.commit()
+        print(f"Successfully updated reputation scores for {updates_count} authors")
+        return updates_count
+        
+    except sqlite3.Error as e:
+        conn.rollback()
+        print(f"Database error while saving reputation scores: {e}")
+        return 0
+
 # Main Execution
 
 def main():
@@ -1831,6 +1938,10 @@ def main():
         print("Calculating reputation scores...")
         author_reputations = calculate_reputation_scores(conn, config, impact_factors)
         
+        # Save reputation scores to database
+        print("Saving reputation scores to database...")
+        save_reputation_scores_to_database(conn, author_reputations)
+
             # Perform additional analyses if requested
 
         

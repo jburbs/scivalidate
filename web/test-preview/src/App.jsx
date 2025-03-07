@@ -16,7 +16,9 @@ function App() {
     const fetchFacultyList = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/faculty`);
+        // Using relative path or BASE_URL for API calls
+        const apiUrl = `${import.meta.env.VITE_API_URL || ''}`;
+        const response = await fetch(`${apiUrl}/api/faculty`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -34,7 +36,7 @@ function App() {
         setLoading(false);
       }
     };
-
+  
     fetchFacultyList();
   }, []);
 

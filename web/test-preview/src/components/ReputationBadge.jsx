@@ -243,14 +243,18 @@ const ReputationPopup = ({ authorId, onClose }) => {
             {/* Overall Reputation Score */}
             <div>
               <h3 className="font-medium mb-2">Expert Reputation Score</h3>
-              <div className="relative pt-1">
-                <SimpleProgress value={calculateReputationScore(authorData)} className="h-2" />
-                <div className="flex justify-between text-xs text-gray-600 mt-1">
-                  <span>0</span>
-                  <span>{Math.round(calculateReputationScore(authorData))}%</span>
-                  <span>100</span>
+              {authorData.reputation_score !== undefined && authorData.reputation_score !== null ? (
+                <div className="relative pt-1">
+                  <SimpleProgress value={authorData.reputation_score * 10} className="h-2" />
+                  <div className="flex justify-between text-xs text-gray-600 mt-1">
+                    <span>0</span>
+                    <span>{authorData.reputation_score.toFixed(1)} / 10</span>
+                    <span>10</span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <p className="text-sm text-gray-500">No reputation score available</p>
+              )}
             </div>
 
             {/* Expertise Areas */}
@@ -296,46 +300,6 @@ const ReputationPopup = ({ authorId, onClose }) => {
       )}
     </div>
   );
-};
-
-// Helper function to calculate reputation score
-const calculateReputationScore = (data) => {
-  // Default values in case properties are missing
-  const hIndex = data.h_index || 0;
-  const publicationCount = data.publication_count || 0;
-  const totalCitations = data.total_citations || 0;
-  const position = data.position || '';
-
-  // This is where we'll implement the reputation scoring algorithm
-  // For now, we'll use a simple weighted average
-  const weights = {
-    position: 0.3,      // Academic position weight
-    publications: 0.3,  // Publication count weight
-    citations: 0.2,     // Citation count weight
-    hIndex: 0.2        // h-index weight
-  };
-
-  // Position scores (example)
-  const positionScores = {
-    'Professor': 1.0,
-    'Associate Professor': 0.8,
-    'Assistant Professor': 0.6,
-    'Research Professor': 0.7,
-    'Lecturer': 0.5
-  };
-
-  // Calculate normalized scores
-  const positionScore = positionScores[position] || 0.5;
-  const pubScore = Math.min(publicationCount / 100, 1); // Normalize to max 100 publications
-  const citationScore = Math.min(totalCitations / 1000, 1); // Normalize to max 1000 citations
-  const hIndexScore = Math.min(hIndex / 40, 1); // Normalize to max h-index of 40
-
-  return (
-    positionScore * weights.position +
-    pubScore * weights.publications +
-    citationScore * weights.citations +
-    hIndexScore * weights.hIndex
-  ) * 100; // Convert to percentage
 };
 
 export { ReputationBadge, ReputationPopup };
