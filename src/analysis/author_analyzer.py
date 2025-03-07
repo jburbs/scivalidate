@@ -1651,7 +1651,120 @@ def populate_fields_tables(conn, suggested_fields, config):
         conn.rollback()
         print(f"Database error: {e}")
         return 0
-     
+
+def associate_authors_with_fields(conn, author_keywords, suggested_fields, config):
+    """
+    Associate authors with fields based on keyword analysis and topic modeling results,
+    storing expertise scores in the author_fields table.
+    
+    Parameters:
+    -----------
+    conn : sqlite3.Connection
+        Connection to the database
+    author_keywords : dict
+        Dictionary of author IDs to their keywords
+    suggested_fields : list
+        List of suggested fields from analysis
+    config : dict
+        Configuration parameters
+    
+    Returns:
+    --------
+    int
+        Number of author-field associations created or updated
+    """
+    import datetime
+    
+    associations_count = 0
+    current_time = datetime.datetime.now().isoformat()
+    
+    # Get existing fields from the database
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name FROM fields")
+    field_map = {row['name'].lower(): row['id'] for row in cursor.fetchall()}
+    
+    # Minimum expertise score threshold for association
+    min_score_threshold = config.get('min_expertise_score', 0.2)
+    
+    try:
+        # Begin transaction
+        conn.execute("BEGIN TRANSACTION")
+        
+        # First, clear existing expertise scores (optional - you might want to keep history)
+        conn.execute("DELETE FROM author_fields")
+        
+        # Method 1: Associate based on keyword matching
+        for author_id, keywords in author_keywords.items():
+            # Skip authors with no meaningful keywords
+            if not keywords:
+                continue
+                
+            # Calculate field match scores based on keyword overlap
+            field_scores = {}
+            for field_name, field_id in field_map.items():
+                # Get field keywords
+                cursor.execute("SELECT keyword FROM field_keywords WHERE field_id = ?", (field_id,))
+                field_keywords = {row['keyword'].lower() for row in cursor.fetchall()}
+                
+                # Calculate overlap score
+                overlap_score = 0.0
+                for keyword, weight in keywords.items():
+                    if keyword in field_keywords:
+                        overlap_score += weight
+                    # Partial matches (substring)
+                    elif any(keyword in fk or fk in keyword for fk in field_keywords):
+                        overlap_score += weight * 0.5
+                
+                # Normalize score (0-1 scale)
+                total_weight = sum(keywords.values())
+                if total_weight > 0:
+                    normalized_score = min(1.0, overlap_score / total_weight)
+                    if normalized_score >= min_score_threshold:
+                        field_scores[field_id] = normalized_score
+            
+            # Method 2: Also consider topic-based fields if available
+            if len(suggested_fields) > 0 and isinstance(suggested_fields[0], dict) and 'top_authors' in suggested_fields[0]:
+                # This appears to be topic modeling output
+                for field in suggested_fields:
+                    if 'suggested_name' in field and field['suggested_name'].lower() in field_map:
+                        field_id = field_map[field['suggested_name'].lower()]
+                        
+                        # Check if this author is in the top authors
+                        for author_info in field.get('top_authors', []):
+                            if isinstance(author_info, dict) and author_info.get('author_id') == author_id:
+                                # Use the dominance ratio or combined dominance as expertise score
+                                expertise_score = author_info.get('combined_dominance', author_info.get('dominance_ratio', 0.0))
+                                if expertise_score >= min_score_threshold:
+                                    field_scores[field_id] = max(expertise_score, field_scores.get(field_id, 0.0))
+            
+            # Store the scores in author_fields table
+            for field_id, score in field_scores.items():
+                # Publication count is a placeholder here - would need additional query to get accurate count
+                cursor.execute("""
+                    INSERT INTO author_fields (
+                        author_id, field_id, expertise_score, 
+                        publication_count, last_calculated
+                    ) VALUES (?, ?, ?, ?, ?)
+                    ON CONFLICT(author_id, field_id) DO UPDATE SET
+                        expertise_score = ?,
+                        last_calculated = ?
+                """, (
+                    author_id, field_id, score, 
+                    0, current_time,
+                    score, current_time
+                ))
+                associations_count += 1
+        
+        # Commit the transaction
+        conn.commit()
+        print(f"Created/updated {associations_count} author-field associations")
+        return associations_count
+        
+    except sqlite3.Error as e:
+        conn.rollback()
+        print(f"Database error: {e}")
+        return 0
+
 # Main Execution
 
 def main():
@@ -2020,6 +2133,10 @@ def main():
                 else:
                     print(f"\n{name}: No significant research areas identified")
 
+        if suggested_fields:
+            print("Creating author-field associations in database...")
+            associations_count = associate_authors_with_fields(conn, author_keywords, suggested_fields, config)
+            print(f"Created {associations_count} author-field associations")
 
 
         # Print field relationships if available
