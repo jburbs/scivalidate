@@ -425,7 +425,7 @@ async def get_faculty_reputation(faculty_id: str):
     try:
         conn = get_db()
         
-        # Get basic author information
+        # Get basic author information - ADD reputation_score to the query
         faculty = conn.execute("""
             SELECT 
                 id,
@@ -433,7 +433,8 @@ async def get_faculty_reputation(faculty_id: str):
                 department,
                 institution,
                 h_index,
-                total_citations
+                total_citations,
+                reputation_score
             FROM authors
             WHERE id = ?
         """, (faculty_id,)).fetchone()
@@ -510,7 +511,6 @@ async def get_faculty_reputation(faculty_id: str):
     finally:
         if 'conn' in locals():
             conn.close()
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
