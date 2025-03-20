@@ -1,0 +1,7 @@
+{
+  "name": "@scivalidate/utils",
+  "version": "0.1.0",
+  "main": "./src/index.js",
+  "dependencies": {},
+  "type": "module"
+}

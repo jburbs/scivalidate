@@ -1,0 +1,15 @@
+/* @shared/components/navbar.css */
+nav {
+  height: 64px;
+  box-sizing: border-box;
+}
+
+nav > div {
+  height: 100%;
+  max-width: 1280px;
+}
+
+/* Ensure all elements in the navbar respect box-sizing */
+nav *, nav *:before, nav *:after {
+  box-sizing: border-box;
+}

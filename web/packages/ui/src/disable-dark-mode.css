@@ -1,0 +1,57 @@
+/* Global override to disable Tailwind dark mode styles */
+
+:root {
+  /* Force light mode color-scheme */
+  color-scheme: light !important;
+}
+
+/* Apply light mode background to elements with dark mode bg */
+.dark\:bg-gray-900,
+.dark\:bg-gray-800,
+.dark\:bg-blue-900,
+.dark\:bg-blue-800 {
+  background-color: initial !important;
+}
+
+/* Force light mode colors for elements with dark text colors */
+.dark\:text-blue-400,
+.dark\:text-blue-300,
+.dark\:text-gray-400,
+.dark\:text-gray-300,
+.dark\:text-gray-200,
+.dark\:text-white,
+.dark\:text-orange-400 {
+  color: initial !important;
+}
+
+/* Reset dark mode border colors */
+.dark\:border-gray-700,
+.dark\:border-blue-700,
+.dark\:border-blue-500 {
+  border-color: initial !important;
+}
+
+/* Ensure dark hover states are disabled */
+.dark\:hover\:text-blue-300:hover,
+.dark\:hover\:text-blue-400:hover,
+.dark\:hover\:border-blue-500:hover {
+  color: initial !important;
+  border-color: initial !important;
+}
+
+/* Keep light mode backgrounds for all elements */
+html {
+  background-color: white !important;
+}
+
+/* Disable media query-based dark mode entirely */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light !important;
+  }
+  
+  html {
+    background-color: white !important;
+    color: initial !important;
+  }
+}
