@@ -92,6 +92,7 @@ Desktop.ini
 # Web Support Packages
 node_modules/
 bower_components/
+my-turborepo/
 # Local Netlify folder
 .netlify
 
