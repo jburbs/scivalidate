@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Heart, MessageCircle, Repeat, Share, Calendar, Link, MapPin } from 'lucide-react';
+import { ArrowLeft, Heart, MessageCircle, Repeat, Share, Calendar, Link, MapPin, MoreHorizontal } from 'lucide-react';
 import ReputationBadge from './ReputationBadge';
 import StarRating from './StarRating';
 import BadgeClaimModal from './BadgeClaimModal';
 import BadgeVerificationModal from './BadgeVerificationModal';
-import { validatePostContent } from '@scivalidate/api-client';;
+import { validatePostContent } from '@scivalidate/api-client';
 
 const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerification }) => {
   const [activeTab, setActiveTab] = useState('posts');
@@ -44,13 +44,13 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
     {
       id: 101,
       content: 'Just published a new paper on decentralized identity systems in federated social networks. This has implications for how we establish trust in online communities.',
-      timestamp: '15m ago',
+      timestamp: '15m',
       stats: { replies: 12, reblogs: 24, likes: 38 }
     },
     {
       id: 102,
       content: 'Excited to be speaking at the Decentralized Web Summit next month on reputation systems for federated networks.',
-      timestamp: '2d ago',
+      timestamp: '2d',
       stats: { replies: 9, reblogs: 17, likes: 53 }
     }
   ];
@@ -76,213 +76,227 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
 
   if (loading) {
     return (
-      <div className="p-4 flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#2b90d9]"></div>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#1d9bf0]"></div>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="border-x border-[#2e3338]">
       {/* Header */}
       <div className="relative">
-        <div className="h-48 bg-[#4c60d8]"></div>
-        <button 
-          className="absolute top-4 left-4 bg-black/50 text-white p-2 rounded-full"
-          onClick={onBack}
-        >
-          <ArrowLeft size={20} />
-        </button>
+        <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-sm flex items-center gap-6 p-4">
+          <button 
+            className="text-[#e6eef9] h-8 w-8 flex items-center justify-center rounded-full hover:bg-[#181818]"
+            onClick={onBack}
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <div>
+            <h2 className="text-xl font-bold text-[#e6eef9]">{profile.displayName}</h2>
+            <div className="text-[#8899a6] text-sm">2 posts</div>
+          </div>
+        </div>
         
-        <div className="px-4 pb-4 relative">
-          <img 
-            src={profile.avatar} 
-            alt={profile.displayName} 
-            className="w-24 h-24 rounded-full border-4 border-[#191b22] absolute -top-12 left-4"
-          />
-          
-          <div className="pt-14 flex justify-between items-start">
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold text-[#d9e1e8]">{profile.displayName}</h2>
-                {authorBadge && (
-                  <ReputationBadge
-                    badge={authorBadge}
-                    size="small"
-                    authorId={profile.id}
-                  />
-                )}
-              </div>
-              <p className="text-[#9baec8]">@{profile.username}</p>
-              
-              {/* Star Rating for Reputation Score */}
-              {reputationScore > 0 && (
-                <div className="mt-2">
-                  <StarRating
-                    score={reputationScore}
-                    primaryColor="#2fc72e"
-                    size="small"
-                  />
-                </div>
-              )}
-            </div>
+        <div className="h-48 bg-[#3d5466]"></div>
+        
+        <div className="px-4 pb-3 relative">
+          <div className="flex justify-between">
+            <img 
+              src={profile.avatar} 
+              alt={profile.displayName} 
+              className="w-24 h-24 rounded-full border-4 border-black absolute -top-16"
+            />
             
-            {!isOwnProfile && !isAdminView && (
-              <button className="bg-[#2b90d9] text-white rounded-full px-4 py-2 font-bold">
-                Follow
-              </button>
-            )}
-            
-            {isOwnProfile && (
-              <button className="border border-[#313543] text-[#d9e1e8] rounded-full px-4 py-2 font-bold">
-                Edit profile
-              </button>
-            )}
-            
-            {isAdminView && (
-              <button 
-                className="bg-[#2b90d9] text-white rounded-full px-4 py-2 font-bold"
-                onClick={() => setShowVerificationModal(true)}
-              >
-                Review Verification
-              </button>
-            )}
-          </div>
-          
-          <div className="mt-4 text-[#d9e1e8]">
-            <p>{facultyData?.bio || profile?.bio || `Faculty member specializing in ${facultyData?.department || 'academic research'}.`}</p>
-            
-            <div className="flex flex-wrap gap-y-2 mt-3 text-[#9baec8]">
-              {facultyData?.institution && (
-                <div className="flex items-center gap-1 mr-4">
-                  <MapPin size={16} />
-                  <span>{facultyData.institution}</span>
-                </div>
-              )}
-              
-              {facultyData?.department && (
-                <div className="flex items-center gap-1 mr-4">
-                  <Link size={16} />
-                  <span>{facultyData.department}</span>
-                </div>
-              )}
-              
-              <div className="flex items-center gap-1 mr-4">
-                <Calendar size={16} />
-                <span>Joined {facultyData?.joined_date || "2023"}</span>
-              </div>
-            </div>
-            
-            <div className="flex gap-4 mt-3 text-[#9baec8]">
-              <div>
-                <span className="text-[#d9e1e8] font-bold">534</span> Following
-              </div>
-              <div>
-                <span className="text-[#d9e1e8] font-bold">2,189</span> Followers
-              </div>
-            </div>
-          </div>
-          
-          {/* Academic metrics if available from faculty data */}
-          {facultyData && (
-            <div className="mt-4 bg-[#2b303b] rounded-lg p-3">
-              <h3 className="text-[#d9e1e8] font-bold mb-2">Academic Metrics</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {facultyData.h_index && (
-                  <div>
-                    <p className="text-[#9baec8] text-sm">H-index</p>
-                    <p className="text-lg font-semibold text-[#d9e1e8]">{facultyData.h_index}</p>
-                  </div>
-                )}
-                
-                {facultyData.total_citations && (
-                  <div>
-                    <p className="text-[#9baec8] text-sm">Citations</p>
-                    <p className="text-lg font-semibold text-[#d9e1e8]">{facultyData.total_citations}</p>
-                  </div>
-                )}
-                
-                {facultyData.publication_count && (
-                  <div>
-                    <p className="text-[#9baec8] text-sm">Publications</p>
-                    <p className="text-lg font-semibold text-[#d9e1e8]">{facultyData.publication_count}</p>
-                  </div>
-                )}
-                
-                {facultyData.latest_publication_year && (
-                  <div>
-                    <p className="text-[#9baec8] text-sm">Latest Publication</p>
-                    <p className="text-lg font-semibold text-[#d9e1e8]">{facultyData.latest_publication_year}</p>
-                  </div>
-                )}
-              </div>
-              
-              {/* Button to view full verification details */}
-              <button 
-                className="w-full bg-[#313543] hover:bg-[#414656] text-[#d9e1e8] rounded-lg py-2 mt-3"
-                onClick={handleVerificationClick}
-              >
-                View Full Verification Details
-              </button>
-            </div>
-          )}
-          
-          {/* Author Identity Verification Status */}
-          {!authorBadge && (isOwnProfile || isAdminView) && (
-            <div className="mt-6 border border-dashed border-[#313543] rounded-lg p-4">
-              <div className="text-center">
-                <h3 className="text-lg font-bold text-[#d9e1e8] mb-2">Unclaimed Profile</h3>
-                <p className="text-[#9baec8] mb-3">This profile hasn't been claimed or verified yet.</p>
-                
-                {isOwnProfile && (
-                  <button 
-                    className="bg-[#2b90d9] text-white rounded-full px-4 py-2 font-bold"
-                    onClick={() => setShowClaimModal(true)}
-                  >
-                    Claim This Profile
+            <div className="flex mt-2">
+              {!isOwnProfile && !isAdminView && (
+                <div className="ml-auto flex gap-2">
+                  <button className="w-9 h-9 flex items-center justify-center rounded-full border border-[#2e3338] text-[#e6eef9] hover:bg-[#181818]">
+                    <MoreHorizontal size={18} />
                   </button>
-                )}
-                
-                {isAdminView && !isOwnProfile && (
-                  <div className="text-[#9baec8] text-sm italic">
-                    Only the profile owner can initiate a claim.
+                  <button className="bg-[#e6eef9] text-black font-bold rounded-full px-4 hover:bg-[#d9d9d9] transition-colors">
+                    Follow
+                  </button>
+                </div>
+              )}
+              
+              {isOwnProfile && (
+                <button className="ml-auto border border-[#2e3338] text-[#e6eef9] rounded-full px-4 py-1.5 font-bold hover:bg-[#181818]">
+                  Edit profile
+                </button>
+              )}
+              
+              {isAdminView && (
+                <button 
+                  className="ml-auto bg-[#1d9bf0] text-white rounded-full px-4 py-1.5 font-bold hover:bg-[#1a8cd8]"
+                  onClick={() => setShowVerificationModal(true)}
+                >
+                  Review Verification
+                </button>
+              )}
+            </div>
+          </div>
+          
+          <div className="mt-16">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold text-[#e6eef9]">{profile.displayName}</h1>
+              {authorBadge && (
+                <ReputationBadge
+                  badge={authorBadge}
+                  size="small"
+                  authorId={profile.id}
+                />
+              )}
+            </div>
+            <p className="text-[#8899a6]">@{profile.username}</p>
+            
+            {/* Star Rating for Reputation Score */}
+            {reputationScore > 0 && (
+              <div className="mt-2">
+                <StarRating
+                  score={reputationScore}
+                  primaryColor="#2fc72e"
+                  size="small"
+                />
+              </div>
+            )}
+            
+            <div className="mt-3 text-[#e6eef9]">
+              <p>{facultyData?.bio || profile?.bio || `Faculty member specializing in ${facultyData?.department || 'academic research'}.`}</p>
+              
+              <div className="flex flex-wrap gap-y-2 mt-3 text-[#8899a6] text-sm">
+                {facultyData?.institution && (
+                  <div className="flex items-center gap-1 mr-4">
+                    <MapPin size={16} />
+                    <span>{facultyData.institution}</span>
                   </div>
                 )}
+                
+                {facultyData?.department && (
+                  <div className="flex items-center gap-1 mr-4">
+                    <Link size={16} />
+                    <span>{facultyData.department}</span>
+                  </div>
+                )}
+                
+                <div className="flex items-center gap-1 mr-4">
+                  <Calendar size={16} />
+                  <span>Joined {facultyData?.joined_date || "2023"}</span>
+                </div>
+              </div>
+              
+              <div className="flex gap-4 mt-3 text-[#8899a6] text-sm">
+                <div>
+                  <span className="text-[#e6eef9] font-bold">534</span> Following
+                </div>
+                <div>
+                  <span className="text-[#e6eef9] font-bold">2,189</span> Followers
+                </div>
               </div>
             </div>
-          )}
+            
+            {/* Academic metrics if available from faculty data */}
+            {facultyData && (
+              <div className="mt-4 bg-[#15181c] rounded-xl p-4 border border-[#2e3338]">
+                <h3 className="text-[#e6eef9] font-bold mb-3">Academic Metrics</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {facultyData.h_index && (
+                    <div>
+                      <p className="text-[#8899a6] text-sm">H-index</p>
+                      <p className="text-lg font-semibold text-[#e6eef9]">{facultyData.h_index}</p>
+                    </div>
+                  )}
+                  
+                  {facultyData.total_citations && (
+                    <div>
+                      <p className="text-[#8899a6] text-sm">Citations</p>
+                      <p className="text-lg font-semibold text-[#e6eef9]">{facultyData.total_citations}</p>
+                    </div>
+                  )}
+                  
+                  {facultyData.publication_count && (
+                    <div>
+                      <p className="text-[#8899a6] text-sm">Publications</p>
+                      <p className="text-lg font-semibold text-[#e6eef9]">{facultyData.publication_count}</p>
+                    </div>
+                  )}
+                  
+                  {facultyData.latest_publication_year && (
+                    <div>
+                      <p className="text-[#8899a6] text-sm">Latest Publication</p>
+                      <p className="text-lg font-semibold text-[#e6eef9]">{facultyData.latest_publication_year}</p>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Button to view full verification details */}
+                <button 
+                  className="w-full bg-[#2e3338]/50 hover:bg-[#2e3338] text-[#e6eef9] rounded-full py-2.5 mt-4 font-medium transition-colors"
+                  onClick={handleVerificationClick}
+                >
+                  View Full Verification Details
+                </button>
+              </div>
+            )}
+            
+            {/* Author Identity Verification Status */}
+            {!authorBadge && (isOwnProfile || isAdminView) && (
+              <div className="mt-6 border border-dashed border-[#2e3338] rounded-xl p-5 bg-[#15181c]">
+                <div className="text-center">
+                  <h3 className="text-lg font-bold text-[#e6eef9] mb-2">Unclaimed Profile</h3>
+                  <p className="text-[#8899a6] mb-4">This profile hasn't been claimed or verified yet.</p>
+                  
+                  {isOwnProfile && (
+                    <button 
+                      className="bg-[#1d9bf0] text-white rounded-full px-4 py-2 font-bold hover:bg-[#1a8cd8]"
+                      onClick={() => setShowClaimModal(true)}
+                    >
+                      Claim This Profile
+                    </button>
+                  )}
+                  
+                  {isAdminView && !isOwnProfile && (
+                    <div className="text-[#8899a6] text-sm italic">
+                      Only the profile owner can initiate a claim.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       
       {/* Tabs */}
-      <div className="border-b border-[#313543] flex">
+      <div className="border-b border-[#2e3338] flex">
         <button 
-          className={`px-4 py-3 font-medium ${
-            activeTab === 'posts' ? 'text-[#2b90d9] border-b-2 border-[#2b90d9]' : 'text-[#9baec8]'
+          className={`px-4 py-3 text-center flex-1 ${
+            activeTab === 'posts' ? 'text-[#e6eef9] font-bold border-b-2 border-[#1d9bf0]' : 'text-[#8899a6] hover:bg-[#181818]'
           }`}
           onClick={() => setActiveTab('posts')}
         >
           Posts
         </button>
         <button 
-          className={`px-4 py-3 font-medium ${
-            activeTab === 'replies' ? 'text-[#2b90d9] border-b-2 border-[#2b90d9]' : 'text-[#9baec8]'
+          className={`px-4 py-3 text-center flex-1 ${
+            activeTab === 'replies' ? 'text-[#e6eef9] font-bold border-b-2 border-[#1d9bf0]' : 'text-[#8899a6] hover:bg-[#181818]'
           }`}
           onClick={() => setActiveTab('replies')}
         >
           Replies
         </button>
         <button 
-          className={`px-4 py-3 font-medium ${
-            activeTab === 'media' ? 'text-[#2b90d9] border-b-2 border-[#2b90d9]' : 'text-[#9baec8]'
+          className={`px-4 py-3 text-center flex-1 ${
+            activeTab === 'media' ? 'text-[#e6eef9] font-bold border-b-2 border-[#1d9bf0]' : 'text-[#8899a6] hover:bg-[#181818]'
           }`}
           onClick={() => setActiveTab('media')}
         >
           Media
         </button>
         <button 
-          className={`px-4 py-3 font-medium ${
-            activeTab === 'expertise' ? 'text-[#2b90d9] border-b-2 border-[#2b90d9]' : 'text-[#9baec8]'
+          className={`px-4 py-3 text-center flex-1 ${
+            activeTab === 'expertise' ? 'text-[#e6eef9] font-bold border-b-2 border-[#1d9bf0]' : 'text-[#8899a6] hover:bg-[#181818]'
           }`}
           onClick={() => setActiveTab('expertise')}
         >
@@ -291,31 +305,39 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
       </div>
       
       {/* Content based on active tab */}
-      <div className="divide-y divide-[#313543]">
+      <div>
         {activeTab === 'posts' && posts.map(post => (
-          <div key={post.id} className="p-4">
-            <div className="text-[#d9e1e8]">
+          <div key={post.id} className="p-4 border-b border-[#2e3338] hover:bg-[#111214]/50 transition-colors">
+            <div className="text-[#e6eef9] whitespace-pre-wrap break-words">
               {post.content}
             </div>
             
-            <div className="flex justify-between mt-3 text-[#9baec8]">
-              <button className="flex items-center gap-1 hover:text-[#2b90d9]">
-                <MessageCircle size={18} />
-                <span>{post.stats.replies}</span>
+            <div className="mt-4 flex justify-between max-w-md">
+              <button className="text-[#8899a6] hover:text-[#1d9bf0] flex items-center gap-1 group">
+                <span className="p-2 rounded-full group-hover:bg-[#1d9bf0]/10 transition-colors">
+                  <MessageCircle size={18} />
+                </span>
+                <span className="text-sm">{post.stats.replies}</span>
               </button>
               
-              <button className="flex items-center gap-1 hover:text-[#2fc72e]">
-                <Repeat size={18} />
-                <span>{post.stats.reblogs}</span>
+              <button className="text-[#8899a6] hover:text-[#00ba7c] flex items-center gap-1 group">
+                <span className="p-2 rounded-full group-hover:bg-[#00ba7c]/10 transition-colors">
+                  <Repeat size={18} />
+                </span>
+                <span className="text-sm">{post.stats.reblogs}</span>
               </button>
               
-              <button className="flex items-center gap-1 hover:text-[#eb5c6e]">
-                <Heart size={18} />
-                <span>{post.stats.likes}</span>
+              <button className="text-[#8899a6] hover:text-[#f91880] flex items-center gap-1 group">
+                <span className="p-2 rounded-full group-hover:bg-[#f91880]/10 transition-colors">
+                  <Heart size={18} />
+                </span>
+                <span className="text-sm">{post.stats.likes}</span>
               </button>
               
-              <button className="flex items-center gap-1 hover:text-[#d9e1e8]">
-                <Share size={18} />
+              <button className="text-[#8899a6] hover:text-[#1d9bf0] group">
+                <span className="p-2 rounded-full group-hover:bg-[#1d9bf0]/10 transition-colors">
+                  <Share size={18} />
+                </span>
               </button>
             </div>
           </div>
@@ -326,13 +348,13 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
           <div className="p-4">
             <div className="space-y-3">
               {facultyData.expertise.map((field, index) => (
-                <div key={index} className="bg-[#2b303b] p-3 rounded-lg">
+                <div key={index} className="bg-[#15181c] p-4 rounded-xl border border-[#2e3338]">
                   <div className="flex justify-between items-center">
                     <div>
-                      <div className="font-medium text-[#d9e1e8]">{field.field_name}</div>
-                      <div className="text-sm text-[#9baec8]">{field.publication_count} publications, {field.citation_count} citations</div>
+                      <div className="font-medium text-[#e6eef9]">{field.field_name}</div>
+                      <div className="text-sm text-[#8899a6] mt-1">{field.publication_count} publications, {field.citation_count} citations</div>
                     </div>
-                    <div className="text-[#d9e1e8] font-semibold">
+                    <div className="text-[#e6eef9] font-semibold bg-[#202327] py-1 px-3 rounded-full">
                       Score: {field.expertise_score?.toFixed(1) || 'N/A'}
                     </div>
                   </div>
@@ -341,14 +363,14 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
             </div>
           </div>
         ) : activeTab === 'expertise' ? (
-          <div className="p-4 text-center text-[#9baec8]">
+          <div className="p-6 text-center text-[#8899a6]">
             No expertise information available for this author.
           </div>
         ) : null}
         
         {/* Empty state for other tabs */}
         {(activeTab === 'replies' || activeTab === 'media') && (
-          <div className="p-4 text-center text-[#9baec8]">
+          <div className="p-6 text-center text-[#8899a6]">
             No {activeTab} to display.
           </div>
         )}

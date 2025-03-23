@@ -1,0 +1,302 @@
+/* Custom styles for the Mastodon interface */
+
+/* Base styles for the Mastodon interface */
+body {
+  background-color: #000000;
+  color: #e6eef9;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Layout structure */
+.columns-area {
+  display: flex;
+  height: 100%;
+}
+
+.columns-area__panels {
+  display: flex;
+  flex: 1;
+}
+
+.columns-area__panels__pane {
+  height: 100%;
+}
+
+.columns-area__panels__pane__inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Navigation panel styles */
+.navigation-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.column-link {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  text-decoration: none;
+  border-radius: 9999px;
+  transition: all 0.2s;
+}
+
+.column-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.column-link--transparent {
+  background-color: transparent;
+}
+
+.column-link--logo {
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.column-link__icon {
+  display: inline-block;
+  margin-right: 12px;
+  color: currentColor;
+}
+
+.column-link.active {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Status action bar button styles */
+.status__action-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.status__action-bar__button-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.status__action-bar__button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border-radius: 9999px;
+  transition: all 0.2s;
+}
+
+/* Button hover states */
+.status__action-bar__button:hover {
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Reply button hover */
+.icon-button--with-counter:hover {
+  color: #1d9bf0 !important;
+}
+
+/* Boost/reblog button hover */
+.icon-retweet:hover {
+  color: #00ba7c !important;
+}
+
+/* Favorite/star button hover */
+.star-icon:hover {
+  color: #f91880 !important;
+}
+
+/* Bookmark button hover */
+.bookmark-icon:hover {
+  color: #1d9bf0 !important;
+}
+
+/* Custom icons */
+.icon {
+  fill: currentColor;
+}
+
+/* Flex spacer for bottom content */
+.flex-spacer {
+  flex-grow: 1;
+}
+
+/* Getting started trends section */
+.getting-started__trends {
+  margin-top: 20px;
+  border-radius: 12px;
+  background-color: #15181c;
+  overflow: hidden;
+}
+
+.getting-started__trends h4 {
+  margin-bottom: 15px;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.trends__item {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+}
+
+.trends__item__name a {
+  font-weight: bold;
+  color: #e6eef9;
+  text-decoration: none;
+}
+
+.trends__item__name a:hover {
+  text-decoration: underline;
+}
+
+.trends__item__sparkline {
+  margin-top: 8px;
+  height: 28px;
+}
+
+/* Dropdown styles for consistency */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238899a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 30px;
+  appearance: none;
+}
+
+/* Animation for loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Custom scrollbar for a more modern look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #15181c;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2e3338;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3f45;
+}
+
+/* Styles for verification badges */
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  min-width: 16px;
+  height: 16px;
+}
+
+.verification-badge.verified {
+  background-color: #1d9bf0;
+}
+
+.verification-badge.pending {
+  background-color: #ffd700;
+}
+
+.verification-badge svg {
+  width: 10px;
+  height: 10px;
+  color: white;
+}
+
+/* Compose post section styles */
+.compose-post-container textarea {
+  background-color: transparent;
+  border: none;
+  color: #e6eef9;
+  font-size: 1.25rem;
+  resize: none;
+  width: 100%;
+}
+
+.compose-post-container textarea:focus {
+  outline: none;
+}
+
+/* Scientific validation styles */
+.scientific-validation {
+  border: 1px solid #2e3338;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-top: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.scientific-validation.consensus {
+  border-left: 4px solid #00ba7c;
+}
+
+.scientific-validation.opposition {
+  border-left: 4px solid #f91880;
+}
+
+.scientific-validation.awaiting {
+  border-left: 4px solid #ffd700;
+}
+
+.scientific-validation.active {
+  border-left: 4px solid #1d9bf0;
+}
+
+/* Modal backdrop blur effect */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+}
+
+/* Mastodon specific HR styles */
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #2e3338;
+  margin: 10px 0;
+}
+
+/* Navigation menu */
+.navigation-panel__menu {
+  margin-bottom: 10px;
+}
+
+.navigation-panel__legal {
+  margin-top: auto;
+}
+
+/* Logo styles */
+.logo {
+  display: block;
+}
+
+.logo--wordmark {
+  height: 30px;
+}
+
+.logo--icon {
+  height: 28px;
+  width: 28px;
+}
+
+/* Explore page styles */
+.explore-section {
+  background: #15181c;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
