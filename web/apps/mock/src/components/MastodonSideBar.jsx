@@ -69,14 +69,7 @@ const MastodonSidebar = ({ activeView, setActiveView, activePerspective }) => {
     <div className="navigation-panel h-screen sticky top-0 pt-2 flex flex-col w-[72px] lg:w-[240px] border-r border-[#2e3338]">
       <div className="navigation-panel__logo mb-4">
         <a className="column-link column-link--logo flex items-center px-3 py-2" href="#">
-          {/* Full logo (wordmark) for larger screens */}
-          <svg viewBox="0 0 261 66" className="logo logo--wordmark hidden lg:block h-8" role="img">
-            <title>Mastodon</title>
-            <path
-              d="M256.85 40.73c-4.64 23.9-33.04 24.94-33.04 24.94-32.5.68-59.8-7.37-59.8-7.37 0 3.04-.17 5.93-.17 8.4 0 9.48 6.15 12.3 6.15 12.3 11.18 5.2 42.16 7.25 68.8-.86 0 0 12.22-4.37 12.22-19.9a71.76 71.76 0 005.83-17.5zM227.8 16.45c0-10.3-6.48-13.26-6.48-13.26C200.28-7.77 117.6-3.58 91.53 11.94c-8.46 5.03-8.34 24.68-8.34 24.68l2.62-.87v-8.64s9.7-11.57 46.13-13.6c0 0 20.4-1.35 32.7 9.34.08.06 3.9 3.14 4.06 10.14.1 4.62.1 9.27.1 13.68 5.3.05 11.28.18 17.5.5 0-5.75-.2-11.4-.2-16.4 0-5.18-1.86-9.5-1.86-9.5-5.55-12.4-27.93-11.68-27.93-11.68-40.34-2.03-62.84 8.7-62.84 8.7v-4.45s22.5-10.8 62.84-8.78c0 0 22.4-.73 27.94 11.68 0 0 1.85 4.32 1.85 9.5 0 5.05.2 10.5.2 16.34 4.92.28 9.9.67 14.77 1.17.05-6.18.33-16.18.33-21.87 0 0 .28-5.23-5.66-10.72 0 0-10.1-12.07-44.14-13.12 0 0-30.73-1.92-52.1 12.3-.07.05-5.28 3.03-5.28 8.6v24.49S81.35 29.1 92.55 20.77c0 0-1.35 2.38-1.38 8.63 0 9.94.4 45.53.4 50.86 0 12.67 8.32 16.43 8.32 16.43 15.4 7.18 57.58 10.2 93.7-1.1 0 0 16.95-5.93 17.03-29.27V52.7s-.43-7.17 9.2-10.67c0 0 8.9-3.06 19.08-3.77-.05-7.87-.26-15.62-.41-21.8-.14-1.13-2.98-21.86-42.16-23.43 0 0-31.55-1.3-55.75 9.14 0 0 .32-2.03.88-3.1C173.5-.6 227.8 3.74 227.8 16.46z"
-              fill="#595aff"
-            />
-          </svg>
+
 
           {/* Mobile logo (icon only) */}
           <div className="lg:hidden w-10 h-10 flex items-center justify-center">
@@ -147,65 +140,7 @@ const MastodonSidebar = ({ activeView, setActiveView, activePerspective }) => {
         </div>
       )}
       
-      {/* Trending section (for larger screens) */}
-      <div className="navigation-panel__portal mt-auto hidden lg:block px-3 py-4">
-        <div className="getting-started__trends bg-[#15181c] rounded-xl p-4">
-          <h4 className="text-lg font-bold text-[#e6eef9] mb-3">
-            <a href="#">Trending now</a>
-          </h4>
-          
-          <div className="trends__item mb-3 pb-3 border-b border-[#2e3338]">
-            <div className="trends__item__name">
-              <a href="#" className="text-[#e6eef9] font-bold">#OpenScience</a>
-              <div className="text-[#8899a6] text-sm mt-1">
-                <strong>2,543</strong> people in the past 2 days
-              </div>
-            </div>
-            <div className="trends__item__sparkline mt-1">
-              <svg viewBox="0 0 50 28" preserveAspectRatio="none" className="w-full h-8">
-                <g>
-                  <path d="M2 26 C 3.9 26 7.7 26 9.6 26 C 11.6 26 15.4 26 17.3 26 C 19.2 26 23.1 26 25 26 C 26.9 26 30.7 26 32.7 26 C 34.6 26 38.4 26 40.3 26 C 42.2 26 46.1 2 48 2 L48 26 2 26 2 26" style={{stroke: "none", strokeWidth: 0, fillOpacity: 0.1, fill: "#6364ff"}} />
-                  <path d="M2 26 C 3.9 26 7.7 26 9.6 26 C 11.6 26 15.4 26 17.3 26 C 19.2 26 23.1 26 25 26 C 26.9 26 30.7 26 32.7 26 C 34.6 26 38.4 26 40.3 26 C 42.2 26 46.1 2 48 2" style={{stroke: "#6364ff", strokeWidth: 1, fill: "none"}} />
-                </g>
-              </svg>
-            </div>
-          </div>
-          
-          <div className="trends__item mb-3 pb-3 border-b border-[#2e3338]">
-            <div className="trends__item__name">
-              <a href="#" className="text-[#e6eef9] font-bold">#PeerReview</a>
-              <div className="text-[#8899a6] text-sm mt-1">
-                <strong>1,892</strong> people in the past 2 days
-              </div>
-            </div>
-            <div className="trends__item__sparkline mt-1">
-              <svg viewBox="0 0 50 28" preserveAspectRatio="none" className="w-full h-8">
-                <g>
-                  <path d="M2 26 C 3.9 26 7.7 24 9.6 24 C 11.6 24 15.4 25 17.3 25 C 19.2 25 23.1 24 25 24 C 26.9 24 30.7 24 32.7 24 C 34.6 24 38.4 26 40.3 26 C 42.2 26 46.1 2 48 2 L48 26 2 26 2 26" style={{stroke: "none", strokeWidth: 0, fillOpacity: 0.1, fill: "#6364ff"}} />
-                  <path d="M2 26 C 3.9 26 7.7 24 9.6 24 C 11.6 24 15.4 25 17.3 25 C 19.2 25 23.1 24 25 24 C 26.9 24 30.7 24 32.7 24 C 34.6 24 38.4 26 40.3 26 C 42.2 26 46.1 2 48 2" style={{stroke: "#6364ff", strokeWidth: 1, fill: "none"}} />
-                </g>
-              </svg>
-            </div>
-          </div>
-          
-          <div className="trends__item">
-            <div className="trends__item__name">
-              <a href="#" className="text-[#e6eef9] font-bold">#SciValidate</a>
-              <div className="text-[#8899a6] text-sm mt-1">
-                <strong>1,105</strong> people in the past 2 days
-              </div>
-            </div>
-            <div className="trends__item__sparkline mt-1">
-              <svg viewBox="0 0 50 28" preserveAspectRatio="none" className="w-full h-8">
-                <g>
-                  <path d="M2 26 C 3.9 26 7.7 26 9.6 26 C 11.6 26 15.4 25 17.3 25 C 19.2 25 23.1 26 25 26 C 26.9 26 30.7 25 32.7 25 C 34.6 25 38.4 26 40.3 26 C 42.2 26 46.1 2 48 2 L48 26 2 26 2 26" style={{stroke: "none", strokeWidth: 0, fillOpacity: 0.1, fill: "#6364ff"}} />
-                  <path d="M2 26 C 3.9 26 7.7 26 9.6 26 C 11.6 26 15.4 25 17.3 25 C 19.2 25 23.1 26 25 26 C 26.9 26 30.7 25 32.7 25 C 34.6 25 38.4 26 40.3 26 C 42.2 26 46.1 2 48 2" style={{stroke: "#6364ff", strokeWidth: 1, fill: "none"}} />
-                </g>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };

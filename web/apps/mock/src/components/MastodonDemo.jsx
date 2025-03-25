@@ -266,6 +266,7 @@ const MastodonDemo = () => {
   const mappedUsers = facultyData.length > 0 ? mapFacultyToUsers(facultyData) : [];
 
   return (
+    
     <div className="min-h-screen bg-black text-[#e6eef9]">
       {/* Modern Mastodon navbar */}
       <MastodonNavBar 
@@ -280,7 +281,7 @@ const MastodonDemo = () => {
           setActiveView={setActiveView}
           activePerspective={activePerspective}
         />
-        
+
         {/* Main content area */}
         <div className="columns-area__panels flex-1 min-w-0 max-w-[600px] mx-auto">
           {isLoading && (
