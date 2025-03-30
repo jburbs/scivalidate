@@ -53,7 +53,7 @@ venv.bak/
 *.db
 
 # But don't ignore this specific database
-!/web/test-preview/scivalidate.db
+!scivalidate.db
 *.db-shm
 *.db-wal
 *.sqlite
