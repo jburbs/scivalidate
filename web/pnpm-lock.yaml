@@ -31,13 +31,13 @@ importers:
   apps/about:
     dependencies:
       '@scivalidate/api-client':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/api-client
       '@scivalidate/ui':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/ui
       '@scivalidate/utils':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/utilities
       react:
         specifier: ^18.2.0
@@ -47,7 +47,7 @@ importers:
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@scivalidate/config':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/config
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -68,13 +68,13 @@ importers:
   apps/example:
     dependencies:
       '@scivalidate/api-client':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/api-client
       '@scivalidate/ui':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/ui
       '@scivalidate/utils':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/utilities
       react:
         specifier: ^18.2.0
@@ -84,7 +84,7 @@ importers:
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@scivalidate/config':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/config
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -179,13 +179,13 @@ importers:
   apps/signup:
     dependencies:
       '@scivalidate/api-client':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/api-client
       '@scivalidate/ui':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/ui
       '@scivalidate/utils':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/utilities
       react:
         specifier: ^18.2.0
@@ -195,7 +195,7 @@ importers:
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@scivalidate/config':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/config
       '@vitejs/plugin-react':
         specifier: ^4.2.1
@@ -216,13 +216,13 @@ importers:
   apps/thanks:
     dependencies:
       '@scivalidate/api-client':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/api-client
       '@scivalidate/ui':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/ui
       '@scivalidate/utils':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/utilities
       react:
         specifier: ^18.2.0
@@ -232,7 +232,7 @@ importers:
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@scivalidate/config':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/config
       '@vitejs/plugin-react':
         specifier: ^4.2.1

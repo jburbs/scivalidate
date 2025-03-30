@@ -95,8 +95,8 @@ const BadgeVerificationModal = ({ onClose }) => {
                     <ReputationBadge 
                       badge={{ type: claim.type, status: 'pending', name: claim.name }}
                       size="small"
-                      authorId={post.user.id} // Add this line to enable popup functionality
-                      mode="user" // Add this line to specify this is a user badge
+                      authorId={claim.user.id}
+                      mode="user"
                     />
                     <span className="text-[#d9e1e8] text-sm">{claim.name}</span>
                   </div>
@@ -131,8 +131,8 @@ const BadgeVerificationModal = ({ onClose }) => {
                         <ReputationBadge 
                           badge={{ type: activeClaim.type, status: 'pending', name: activeClaim.name }}
                           size="medium"
-                          authorId={post.user.id} // Add this line to enable popup functionality
-                          mode="user" // Add this line to specify this is a user badge
+                          authorId={activeClaim.user.id}
+                          mode="user"
                         />
                         <span className="text-[#d9e1e8] font-medium">{activeClaim.name}</span>
                       </div>

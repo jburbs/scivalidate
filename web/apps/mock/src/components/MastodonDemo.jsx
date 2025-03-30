@@ -113,6 +113,21 @@ const RightSidebar = () => {
   );
 };
 
+function getSpecificAvatarNumber(familyName) {
+  if (!familyName) return 60; // Default to Random avatar
+  
+  // Convert to lowercase for case-insensitive matching
+  const name = familyName.toLowerCase();
+  
+  // Check for specific names
+  if (name.includes('smith')) return 32;
+  if (name.includes('johnson')) return 59;
+  if (name.includes('lee')) return 48;
+  if (name.includes('chen')) return 62;
+  
+  // Default to Random avatar for any other names
+  return 60;
+}
 const MastodonDemo = () => {
   // State to manage which view is active (timeline, profile, etc.)
   const [activeView, setActiveView] = useState('timeline');
@@ -200,7 +215,7 @@ const MastodonDemo = () => {
         displayName: faculty.display_name,
         // Use the actual email if available, otherwise create a placeholder
         username: faculty.email || `${faculty.given_name.toLowerCase()}.${faculty.family_name.toLowerCase()}@academia.edu`,
-        avatar: faculty.avatar_url || `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`,
+        avatar: faculty.avatar_url || `https://i.pravatar.cc/150?img=${getSpecificAvatarNumber(faculty.family_name)}}`,
         badges: verificationStatus !== 'unverified' ? [badge] : [],
         // Add additional faculty data for profile view
         facultyData: faculty

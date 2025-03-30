@@ -1,0 +1,35 @@
+[build]
+  command = "pnpm run build"
+  publish = "dist"
+
+# Redirect rules for each app
+[[redirects]]
+  from = "/about/*"
+  to = "/about/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/mock/*"
+  to = "/mock/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/signup/*"
+  to = "/signup/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/thanks/*"
+  to = "/thanks/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/example/*"
+  to = "/example/index.html"
+  status = 200
+
+# Root SPA redirect
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

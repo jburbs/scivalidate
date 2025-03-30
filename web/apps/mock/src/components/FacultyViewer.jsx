@@ -38,7 +38,7 @@ const FacultyViewer = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {faculty.map((member) => (
-          <div key={member.id} className="bg-white rounded-lg shadow-md p-4">
+          <div key={member.id} className="bg-transparent rounded-lg shadow-md p-4">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h2 className="text-lg font-semibold">{member.display_name}</h2>

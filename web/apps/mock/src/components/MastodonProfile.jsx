@@ -5,6 +5,7 @@ import StarRating from './StarRating';
 import BadgeClaimModal from './BadgeClaimModal';
 import BadgeVerificationModal from './BadgeVerificationModal';
 import { validatePostContent } from '@scivalidate/api-client';
+import sciValidateService from '../services/sciValidateService';
 
 const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerification }) => {
   const [activeTab, setActiveTab] = useState('posts');
@@ -86,9 +87,10 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
     <div className="border-x border-[#2e3338]">
       {/* Header */}
       <div className="relative">
+        {/* Navigation */}
         <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-sm flex items-center gap-6 p-4">
           <button 
-            className="text-[#e6eef9] h-8 w-8 flex items-center justify-center rounded-full hover:bg-[#181818]"
+            className="text-[#e6eef9] h-8 w-8 flex items-center justify-center rounded-full hover:bg-[#181818] bg-transparent"
             onClick={onBack}
           >
             <ArrowLeft size={18} />
@@ -99,46 +101,53 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
           </div>
         </div>
         
-        <div className="h-48 bg-[#3d5466]"></div>
+        {/* Banner */}
+        <div className="h-36 bg-[#3d5466]"></div>
         
-        <div className="px-4 pb-3 relative">
-          <div className="flex justify-between">
+        {/* Avatar */}
+        <div className="flex justify-between items-start px-4">
+          <div className="w-24 h-24 rounded-full border-4 border-black -mt-32 overflow-hidden">
             <img 
               src={profile.avatar} 
               alt={profile.displayName} 
-              className="w-24 h-24 rounded-full border-4 border-black absolute -top-16"
+              className="w-full h-full object-cover"
             />
-            
-            <div className="flex mt-2">
-              {!isOwnProfile && !isAdminView && (
-                <div className="ml-auto flex gap-2">
-                  <button className="w-9 h-9 flex items-center justify-center rounded-full border border-[#2e3338] text-[#e6eef9] hover:bg-[#181818]">
-                    <MoreHorizontal size={18} />
-                  </button>
-                  <button className="bg-[#e6eef9] text-black font-bold rounded-full px-4 hover:bg-[#d9d9d9] transition-colors">
-                    Follow
-                  </button>
-                </div>
-              )}
-              
-              {isOwnProfile && (
-                <button className="ml-auto border border-[#2e3338] text-[#e6eef9] rounded-full px-4 py-1.5 font-bold hover:bg-[#181818]">
-                  Edit profile
-                </button>
-              )}
-              
-              {isAdminView && (
-                <button 
-                  className="ml-auto bg-[#1d9bf0] text-white rounded-full px-4 py-1.5 font-bold hover:bg-[#1a8cd8]"
-                  onClick={() => setShowVerificationModal(true)}
-                >
-                  Review Verification
-                </button>
-              )}
-            </div>
           </div>
+        </div>
+        
+        {/* Action buttons */}
+        <div className="px-4 flex justify-end -mt-14 mb-4">
+          {!isOwnProfile && !isAdminView && (
+            <div className="flex gap-2">
+              <button 
+                className="bg-[#e6eef9] text-black font-bold rounded-full px-4 hover:bg-[#d9d9d9] transition-colors" 
+                style={{backgroundColor: '#e6eef9'}}
+              >
+                Follow
+              </button>
+            </div>
+          )}
           
-          <div className="mt-16">
+          {isOwnProfile && (
+            <button className="border border-[#2e3338] text-[#e6eef9] rounded-full px-4 py-1.5 font-bold hover:bg-[#181818] bg-transparent">
+              Edit profile
+            </button>
+          )}
+          
+          {isAdminView && (
+            <button 
+              className="bg-[#1d9bf0] text-white rounded-full px-4 py-1.5 font-bold hover:bg-[#1a8cd8]"
+              onClick={() => setShowVerificationModal(true)}
+              style={{backgroundColor: '#1d9bf0'}}
+            >
+              Review Verification
+            </button>
+          )}
+        </div>
+        
+        {/* Profile info */}
+        <div className="px-4 pb-3">
+          <div className="mt-8">
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold text-[#e6eef9]">{profile.displayName}</h1>
               {authorBadge && (
@@ -234,6 +243,7 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
                 <button 
                   className="w-full bg-[#2e3338]/50 hover:bg-[#2e3338] text-[#e6eef9] rounded-full py-2.5 mt-4 font-medium transition-colors"
                   onClick={handleVerificationClick}
+                  style={{backgroundColor: 'rgba(46, 51, 56, 0.5)'}}
                 >
                   View Full Verification Details
                 </button>
@@ -251,6 +261,7 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
                     <button 
                       className="bg-[#1d9bf0] text-white rounded-full px-4 py-2 font-bold hover:bg-[#1a8cd8]"
                       onClick={() => setShowClaimModal(true)}
+                      style={{backgroundColor: '#1d9bf0'}}
                     >
                       Claim This Profile
                     </button>
@@ -271,33 +282,48 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
       {/* Tabs */}
       <div className="border-b border-[#2e3338] flex">
         <button 
-          className={`px-4 py-3 text-center flex-1 ${
-            activeTab === 'posts' ? 'text-[#e6eef9] font-bold border-b-2 border-[#1d9bf0]' : 'text-[#8899a6] hover:bg-[#181818]'
-          }`}
+          className="px-4 py-3 text-center flex-1 bg-transparent"
+          style={{
+            color: activeTab === 'posts' ? '#e6eef9' : '#8899a6',
+            fontWeight: activeTab === 'posts' ? 'bold' : 'normal',
+            borderBottom: activeTab === 'posts' ? '2px solid #1d9bf0' : 'none'
+          }}
           onClick={() => setActiveTab('posts')}
         >
           Posts
         </button>
+        
         <button 
-          className={`px-4 py-3 text-center flex-1 ${
-            activeTab === 'replies' ? 'text-[#e6eef9] font-bold border-b-2 border-[#1d9bf0]' : 'text-[#8899a6] hover:bg-[#181818]'
-          }`}
+          className="px-4 py-3 text-center flex-1 bg-transparent"
+          style={{
+            color: activeTab === 'replies' ? '#e6eef9' : '#8899a6',
+            fontWeight: activeTab === 'replies' ? 'bold' : 'normal',
+            borderBottom: activeTab === 'replies' ? '2px solid #1d9bf0' : 'none'
+          }}
           onClick={() => setActiveTab('replies')}
         >
           Replies
         </button>
+        
         <button 
-          className={`px-4 py-3 text-center flex-1 ${
-            activeTab === 'media' ? 'text-[#e6eef9] font-bold border-b-2 border-[#1d9bf0]' : 'text-[#8899a6] hover:bg-[#181818]'
-          }`}
+          className="px-4 py-3 text-center flex-1 bg-transparent"
+          style={{
+            color: activeTab === 'media' ? '#e6eef9' : '#8899a6',
+            fontWeight: activeTab === 'media' ? 'bold' : 'normal',
+            borderBottom: activeTab === 'media' ? '2px solid #1d9bf0' : 'none'
+          }}
           onClick={() => setActiveTab('media')}
         >
           Media
         </button>
+        
         <button 
-          className={`px-4 py-3 text-center flex-1 ${
-            activeTab === 'expertise' ? 'text-[#e6eef9] font-bold border-b-2 border-[#1d9bf0]' : 'text-[#8899a6] hover:bg-[#181818]'
-          }`}
+          className="px-4 py-3 text-center flex-1 bg-transparent"
+          style={{
+            color: activeTab === 'expertise' ? '#e6eef9' : '#8899a6',
+            fontWeight: activeTab === 'expertise' ? 'bold' : 'normal',
+            borderBottom: activeTab === 'expertise' ? '2px solid #1d9bf0' : 'none'
+          }}
           onClick={() => setActiveTab('expertise')}
         >
           Expertise
@@ -313,29 +339,29 @@ const MastodonProfile = ({ profile, onBack, activePerspective, onShowVerificatio
             </div>
             
             <div className="mt-4 flex justify-between max-w-md">
-              <button className="text-[#8899a6] hover:text-[#1d9bf0] flex items-center gap-1 group">
-                <span className="p-2 rounded-full group-hover:bg-[#1d9bf0]/10 transition-colors">
+              <button className="text-[#8899a6] hover:text-[#1d9bf0] flex items-center gap-1 group bg-transparent">
+                <span className="p-2 rounded-full group-hover:bg-[#1d9bf0]/10 transition-colors bg-transparent">
                   <MessageCircle size={18} />
                 </span>
                 <span className="text-sm">{post.stats.replies}</span>
               </button>
               
-              <button className="text-[#8899a6] hover:text-[#00ba7c] flex items-center gap-1 group">
-                <span className="p-2 rounded-full group-hover:bg-[#00ba7c]/10 transition-colors">
+              <button className="text-[#8899a6] hover:text-[#00ba7c] flex items-center gap-1 group bg-transparent">
+                <span className="p-2 rounded-full group-hover:bg-[#00ba7c]/10 transition-colors bg-transparent">
                   <Repeat size={18} />
                 </span>
                 <span className="text-sm">{post.stats.reblogs}</span>
               </button>
               
-              <button className="text-[#8899a6] hover:text-[#f91880] flex items-center gap-1 group">
-                <span className="p-2 rounded-full group-hover:bg-[#f91880]/10 transition-colors">
+              <button className="text-[#8899a6] hover:text-[#f91880] flex items-center gap-1 group bg-transparent">
+                <span className="p-2 rounded-full group-hover:bg-[#f91880]/10 transition-colors bg-transparent">
                   <Heart size={18} />
                 </span>
                 <span className="text-sm">{post.stats.likes}</span>
               </button>
               
-              <button className="text-[#8899a6] hover:text-[#1d9bf0] group">
-                <span className="p-2 rounded-full group-hover:bg-[#1d9bf0]/10 transition-colors">
+              <button className="text-[#8899a6] hover:text-[#1d9bf0] group bg-transparent">
+                <span className="p-2 rounded-full group-hover:bg-[#1d9bf0]/10 transition-colors bg-transparent">
                   <Share size={18} />
                 </span>
               </button>

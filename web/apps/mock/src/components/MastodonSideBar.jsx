@@ -73,17 +73,7 @@ const MastodonSidebar = ({ activeView, setActiveView, activePerspective }) => {
 
           {/* Mobile logo (icon only) */}
           <div className="lg:hidden w-10 h-10 flex items-center justify-center">
-            <svg viewBox="0 0 32 32" className="h-8 w-8" role="img">
-              <title>Mastodon</title>
-              <path
-                d="M16 0C7.16 0 0 7.16 0 16c0 8.84 7.16 16 16 16 8.84 0 16-7.16 16-16 0-8.84-7.16-16-16-16z"
-                fill="#595aff"
-              />
-              <path
-                d="M16 5.414c-3.142 0-5.71 2.434-5.71 5.414v6.652c0 2.98 2.568 5.414 5.71 5.414 3.142 0 5.71-2.434 5.71-5.414v-6.652c0-2.98-2.568-5.414-5.71-5.414z"
-                fill="white"
-              />
-            </svg>
+
           </div>
         </a>
       </div>

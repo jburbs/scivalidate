@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ReputationPopup from './ReputationPopup';
 import AtomBadge from './AtomBadge';
-import { validatePostContent } from '@scivalidate/api-client';;
+import { validatePostContent } from '@scivalidate/api-client';
+import sciValidateService from '../services/sciValidateService';
 
 /**
  * ReputationBadge - Simplified version with single badge type

@@ -105,23 +105,23 @@ const NavBar = () => {
           flex: '0 0 auto'
         }}>
           <a
-            href="/about"
+            href="/about/"
             style={{
               marginLeft: '24px',
-              color: currentPath.includes('about') ? '#4f46e5' : '#6b7280',
+              color: currentPath.startsWith('/about') ? '#4f46e5' : '#6b7280',
               textDecoration: 'none',
               fontSize: '14px',
               fontWeight: '500',
               whiteSpace: 'nowrap'
             }}
             onMouseEnter={e => {
-              if (!currentPath.includes('about')) {
+              if (!currentPath.startsWith('/about')) {
                 e.target.style.color = '#4f46e5';
                 e.target.style.textDecoration = 'underline';
               }
             }}
             onMouseLeave={e => {
-              if (!currentPath.includes('about')) {
+              if (!currentPath.startsWith('/about')) {
                 e.target.style.color = '#6b7280';
                 e.target.style.textDecoration = 'none';
               }
@@ -130,23 +130,23 @@ const NavBar = () => {
             About
           </a>
           <a
-            href="/mock"
+            href="/mock/"
             style={{
               marginLeft: '24px',
-              color: currentPath.includes('mock') ? '#4f46e5' : '#6b7280',
+              color: currentPath.startsWith('/mock') ? '#4f46e5' : '#6b7280',
               textDecoration: 'none',
               fontSize: '14px',
               fontWeight: '500',
               whiteSpace: 'nowrap'
             }}
             onMouseEnter={e => {
-              if (!currentPath.includes('mock')) {
+              if (!currentPath.startsWith('/mock')) {
                 e.target.style.color = '#4f46e5';
                 e.target.style.textDecoration = 'underline';
               }
             }}
             onMouseLeave={e => {
-              if (!currentPath.includes('mock')) {
+              if (!currentPath.startsWith('/mock')) {
                 e.target.style.color = '#6b7280';
                 e.target.style.textDecoration = 'none';
               }
@@ -155,23 +155,23 @@ const NavBar = () => {
             Demo
           </a>
           <a
-            href="/signup"
+            href="/signup/"
             style={{
               marginLeft: '24px',
-              color: currentPath.includes('signup') ? '#4f46e5' : '#6b7280',
+              color: currentPath.startsWith('/signup') ? '#4f46e5' : '#6b7280',
               textDecoration: 'none',
               fontSize: '14px',
               fontWeight: '500',
               whiteSpace: 'nowrap'
             }}
             onMouseEnter={e => {
-              if (!currentPath.includes('signup')) {
+              if (!currentPath.startsWith('/signup')) {
                 e.target.style.color = '#4f46e5';
                 e.target.style.textDecoration = 'underline';
               }
             }}
             onMouseLeave={e => {
-              if (!currentPath.includes('signup')) {
+              if (!currentPath.startsWith('/signup')) {
                 e.target.style.color = '#6b7280';
                 e.target.style.textDecoration = 'none';
               }
@@ -181,23 +181,23 @@ const NavBar = () => {
           </a>
           
           <a
-            href="/example"
+            href="/example/"
             style={{
               marginLeft: '24px',
-              color: currentPath.includes('example') ? '#4f46e5' : '#6b7280',
+              color: currentPath.startsWith('/example') ? '#4f46e5' : '#6b7280',
               textDecoration: 'none',
               fontSize: '14px',
               fontWeight: '500',
               whiteSpace: 'nowrap'
             }}
             onMouseEnter={e => {
-              if (!currentPath.includes('example')) {
+              if (!currentPath.startsWith('/example')) {
                 e.target.style.color = '#4f46e5';
                 e.target.style.textDecoration = 'underline';
               }
             }}
             onMouseLeave={e => {
-              if (!currentPath.includes('example')) {
+              if (!currentPath.startsWith('/example')) {
                 e.target.style.color = '#6b7280';
                 e.target.style.textDecoration = 'none';
               }

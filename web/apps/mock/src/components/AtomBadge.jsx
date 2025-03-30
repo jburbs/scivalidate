@@ -169,7 +169,7 @@ const AtomBadge = ({
       <svg 
         xmlns="http://www.w3.org/2000/svg" 
         viewBox={config.viewBox} 
-        style={styles.svg}
+        style={{...styles.svg, backgroundColor: 'transparent'}}
         className={config.className}
       >
         {/* Atom orbits */}
@@ -178,7 +178,7 @@ const AtomBadge = ({
         <ellipse cx="50" cy="50" rx="45" ry="20" fill="none" stroke={finalOrbitalColor} strokeWidth={config.strokeWidth}></ellipse>
         
         {/* Center circle */}
-        <circle cx="50" cy="50" r="15" fill="#ffffff" stroke={finalOrbitalColor} strokeWidth={config.strokeWidth}></circle>
+        <circle cx="50" cy="50" r="15" fill="transparent" stroke={finalOrbitalColor} strokeWidth={config.strokeWidth}></circle>
         
         {/* Center content (emoji, symbol, etc.) */}
         {centerContent || defaultCenterContent}

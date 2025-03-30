@@ -11,7 +11,7 @@ const API_BASE_URL = 'https://scivalidate.onrender.com/api';
 export const getAuthorReputation = async (authorId) => {
   try {
     const encodedId = encodeURIComponent(authorId);
-    const response = await fetch(`${API_BASE_URL}/faculty/${authorId}/reputation`);
+    const response = await fetch(`${API_BASE_URL}/faculty/${encodedId}/reputation`);
     
     if (!response.ok) {
       // More detailed error message based on status code

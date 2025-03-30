@@ -13,7 +13,6 @@ const MastodonNavBar = ({ activePerspective, onChangePerspective }) => {
               src={MastodonLogo}
               alt="Mastodon"
               className="md:block h-8 w-auto"
-              currentColor="white"
             />
             <img 
               src={MastodonLogo}
@@ -78,7 +77,7 @@ const MastodonNavBar = ({ activePerspective, onChangePerspective }) => {
               title="Your Profile"
             >
               <img 
-                src="https://i.pravatar.cc/150?img=1" 
+                src="https://i.pravatar.cc/150?img=69" 
                 alt="Your avatar" 
                 className="w-full h-full object-cover"
               />

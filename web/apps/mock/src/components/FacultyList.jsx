@@ -33,12 +33,12 @@ const FacultyList = ({ facultyList, selectedFacultyId, onSelectFaculty, loading,
 
   if (loading) {
     return (
-      <div className="bg-white border rounded-lg shadow-sm">
+      <div className="bg-transparent border rounded-lg shadow-sm">
         <div className="p-4">
           <div className="flex items-center border rounded-md mb-4">
             <input
               type="text"
-              className="w-full p-2 rounded-md"
+              className="w-full p-2 rounded-md bg-transparent"
               placeholder="Search faculty..."
               value=""
               disabled
@@ -60,12 +60,12 @@ const FacultyList = ({ facultyList, selectedFacultyId, onSelectFaculty, loading,
   ).length;
 
   return (
-    <div className="bg-white border rounded-lg shadow-sm h-full">
+    <div className="bg-transparent border rounded-lg shadow-sm h-full">
       <div className="p-4">
         <div className="flex items-center border rounded-md mb-4">
           <input
             type="text"
-            className="w-full p-2 rounded-md"
+            className="w-full p-2 rounded-md bg-transparent"
             placeholder="Search faculty..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -110,7 +110,7 @@ const FacultyList = ({ facultyList, selectedFacultyId, onSelectFaculty, loading,
                   className={`p-3 rounded-lg cursor-pointer ${
                     selectedFacultyId === faculty.id 
                       ? 'bg-blue-500 text-white border-blue-600' 
-                      : 'bg-white hover:bg-gray-50 border-gray-200'
+                      : 'bg-transparent hover:bg-gray-50 border-gray-200'
                   }`}
                   onClick={() => onSelectFaculty(faculty.id)}
                 >
