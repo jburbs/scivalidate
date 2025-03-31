@@ -48,76 +48,89 @@ The repository is organized as follows:
 
 ```
 scivalidate/
-├── src/                    # Source code
-│   ├── data_collection/    # Faculty and researcher data acquisition
-│   │   ├── scraper.py      # Web scraping implementation for academic departments
-│   │   └── faculty_data_emails.json  # Structured faculty information
-│   │
-│   ├── database/           # Data persistence and modeling
-│   │   └── database_populator_4.py  # Database schema and population logic
-│   │
-│   ├── analysis/           # Scientific expertise analysis
-│       ├── process_faculty.py  # Processing pipeline for faculty data
-│       ├── author_analyzer.py  # Expertise calculation and network analysis
-│       ├── author_analysis_config.json  # Analysis configuration
-│       ├── scivalidate.db  # SQLite database with processed data
-│       └── network_cache/  # Cache for network analysis results
+├── CONTRIBUTING.md
+├── LICENSE
+├── README.md
+├── api.py
+├── database-schema.md
+├── requirements.txt
+├── scivalidate.db
 │
-├── docs/                   # Project documentation
-│   ├── overview.md         # Project vision and architecture
-│   ├── challenges.md       # Technical challenges and approaches
-│   ├── api_documentation.md # API design specifications
-│   ├── database_schema.md  # Database schema reference
-│   └── getting_started.md  # Guide for new contributors
+├── docs/                             # Project documentation
+│   ├── api_documentation.md
+│   ├── challenges.md
+│   ├── database_schema.md
+│   ├── getting_started.md
+│   ├── images/                       # Documentation images
+│   │   ├── comparison.png
+│   │   ├── favicon.png
+│   │   ├── favicon.svg
+│   │   ├── scivalidate-concept.png
+│   │   └── scivalidate-concept.svg
+│   ├── overview.md
+│   └── verification_badges.md
 │
-├── tests/                  # Test suite
-│   └── test_name_parsing.py # Unit tests for name parsing functionality
-├── web/                    # Web interface components
-│   ├── README.md           # Example documentation
-│   ├── test-preview/       # React/Vite/Tailwind web structure
-│   |   ├── .github/                 # GitHub workflows, PR templates
-│   |   ├── api.py          # API for database access
-│   |   ├── public/                  # Static assets
-│   |   ├── src/
-│   |   │   ├── assets/              # Images, fonts, and other assets/
-│   |   │   ├── components/          # Reusable UI components
-│   |   │   ├── common/          # Site-wide components (Header, Footer, etc.)
-│   |   │   ├── features/        # Feature-specific components
-│   |   │   └── ui/              # Base UI components
-│   |   ├── contexts/            # React context providers
-│   |   ├── hooks/               # Custom React hooks
-│   |   ├── layouts/             # Page layout components
-│   |   ├── lib/                 # Utility functions and libraries
-│   |   ├── pages/               # Page components
-│   |   ├── services/            # API service integrations
-│   |   ├── stores/              # State management (Redux, Zustand, etc.)
-│   |   ├── styles/              # Global styles and Tailwind configuration
-│   |   ├── types/               # TypeScript type definitions
-│   |   ├── App.tsx              # Root application component
-│   |   ├── main.tsx             # Application entry point
-│   |   └── vite-env.d.ts        # Vite type declarations
-│   ├── eslintrc.js             # ESLint configuration
-│   ├── .gitignore               # Git ignore file
-│   ├── index.html               # HTML entry point
-│   ├── package.json             # Project dependencies and scripts
-│   ├── postcss.config.js        # PostCSS configuration
-│   ├── README.md                # Project README
-│   ├── tailwind.config.js       # Tailwind CSS configuration
-│   ├── tsconfig.json            # TypeScript configuration
-│   └── vite.config.ts           # Vite configuration
-├── CONTRIBUTING.md         # Contribution guidelines
-├── README.md               # Project overview
-├── LICENSE                 # MIT License
-└── requirements.txt        # Python dependencies
+├── src/                              # Source code
+│   ├── analysis/                     # Scientific expertise analysis
+│   │   ├── analysis_results/
+│   │   │   ├── topic_fields.json
+│   │   │   └── topic_relationships.json
+│   │   ├── author_analysis_config.json
+│   │   ├── author_analyzer.py
+│   │   ├── config.json
+│   │   ├── fields.json
+│   │   ├── impact_factor_cache.json
+│   │   └── process_faculty.py
+│   │
+│   ├── analysis_results/
+│   │   ├── topic_fields.json
+│   │   └── topic_relationships.json
+│   │
+│   ├── author_analysis_config.json
+│   ├── column_removal_script.sql
+│   │
+│   ├── data_collection/              # Faculty and researcher data acquisition
+│   │   ├── faculty_data_emails.json  # Structured faculty information
+│   │   └── scraper.py                # Web scraping implementation
+│   │
+│   └── database/                     # Data persistence and modeling
+│       ├── database_cleanup.py
+│       ├── database_populator_4.py   # Database schema and population logic
+│       ├── test.py
+│       └── test_cases.json
+│
+├── tests/                            # Test suite
+│   └── test_name_parsing.py          # Unit tests for name parsing functionality
+│
+└── web/                              # Web interface components
+    ├── apps/                         # Multiple web applications
+    │   ├── about/                    # About page application
+    │   ├── example/                  # Example application
+    │   ├── home/                     # Home page application
+    │   ├── mock/                     # Mock/demo application
+    │   ├── signup/                   # Signup page application
+    │   └── thanks/                   # Thanks page application
+    │
+    ├── dist/                         # Compiled distribution files
+    │
+    ├── packages/                     # Shared packages
+    │   ├── api-client/               # API client library
+    │   ├── config/                   # Shared configuration
+    │   ├── ui/                       # Shared UI components
+    │   └── utilities/                # Shared utility functions
+    │
+    ├── netlify.toml                  # Netlify deployment configuration
+    ├── package.json                  # Project dependencies
+    └── turbo.json                    # Turborepo configuration
 ```
 
 ## Web Interface
 
-The SciValidate project includes a web interface prototype that demonstrates the core verification concepts and provides interactive visualizations of scientific expertise networks.
+The SciValidate project includes a web interface prototype demonstrating the core verification concepts and providing interactive visualizations of scientific expertise networks.
 
 ### Demo Website
 
-A live demonstration is available at [scivalidate.org/example](https://scivalidate.org/example), which showcases:
+A live demonstration of the idea on Mastodon is available at [scivalidate.org/mock](https://scivalidate.org/mock), which showcases:
 
 - Interactive network visualization of scientific collaboration relationships
 - Researcher profiles with expertise domain indicators
@@ -165,11 +178,11 @@ We're actively seeking collaborators to help address several significant challen
 
 ### 1. Network Scale and Seeding
 
-Starting with the RPI Chemistry Department (32 faculty) identified 15 with both ORCID identifiers and substantial publication records, with connections to over 3,000 coauthors. Creating a comprehensive "tree of expertise" that identifies the top field experts in each domain requires both technical solutions and academic outreach.
+Starting with the RPI Chemistry Department (32 faculty), 15 were identified with ORCID identifiers and substantial publication records, with connections to over 3,000 coauthors. Creating a comprehensive "tree of expertise" that identifies the top field experts in each domain requires technical solutions and academic outreach.
 
 ### 2. Platform Integration
 
-The verification system must work across platforms where scientific discourse happens. Most major platforms (Twitter/X, LinkedIn, etc.) are proprietary with limited API access. We need innovative approaches to create a verification layer that works universally without requiring direct platform integration.
+The verification system must work across platforms where scientific discourse occurs. Most major platforms (Twitter/X, LinkedIn, etc.) are proprietary and have limited API access. We need innovative approaches to create a universal verification layer without requiring direct platform integration.
 
 ### 3. Critical Mass and Network Effects
 
@@ -256,6 +269,7 @@ For more context on the SciValidate concept, see these articles:
 
 - [Beyond DeSci: A Modern Architecture for Scientific Trust](https://open.substack.com/pub/healingearth/p/beyond-desci-a-modern-architecture)
 - [Beyond DeSci Part 2: Starting Small](https://open.substack.com/pub/healingearth/p/beyond-desci-part-2-starting-small)
+- [Beyond DeSci Part 3: From Concept to Code]([https://open.substack.com/pub/healingearth/p/beyond-desci-part-2-starting-small])
 
 ## License
 
