@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MastodonNavBar from './MastodonNavBar';
 import MastodonTimeline from './MastodonTimeline';
 import MastodonProfile from './MastodonProfile';
-import MastodonSidebar from './MastodonSidebar';
+import MastodonSidebar from './MastodonSideBar';
 import VerificationInterface from './VerificationInterface';
 import { validatePostContent } from '@scivalidate/api-client';
 import './MastodonStyles.css';
