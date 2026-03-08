@@ -25,7 +25,7 @@ function App() {
       try {
         setLoading(true);
         // Using static json to avoid Render charges
-        const response = await fetch(`${import.meta.env.BASE_URL}faculty.json`);
+        const response = await fetch(`/example/faculty.json`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
