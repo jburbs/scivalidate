@@ -24,9 +24,8 @@ function App() {
     const fetchFacultyList = async () => {
       try {
         setLoading(true);
-        // Using relative path or BASE_URL for API calls
-        const apiUrl = `${import.meta.env.VITE_API_URL || 'https://scivalidate.onrender.com'}`;
-        const response = await fetch(`${apiUrl}/api/faculty`);
+        // Using static json to avoid Render charges
+        const response = await fetch(`${import.meta.env.BASE_URL}faculty.json`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -95,7 +94,10 @@ function App() {
           </div>
           <div className="md:col-span-2">
             {selectedFacultyId ? (
-              <VerificationInterface facultyId={selectedFacultyId} />
+              <VerificationInterface
+                facultyId={selectedFacultyId}
+                facultyData={facultyList.find(f => f.id === selectedFacultyId) || null}
+              />
             ) : (
               <div className="border rounded-lg p-6 bg-white text-center">
                 <p className="text-gray-500">Select a faculty member to view details</p>
