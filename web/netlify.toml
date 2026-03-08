@@ -24,6 +24,11 @@
   status = 200
 
 [[redirects]]
+  from = "/example/*.json"
+  to = "/example/:splat"
+  status = 200
+
+[[redirects]]
   from = "/example/*"
   to = "/example/index.html"
   status = 200
